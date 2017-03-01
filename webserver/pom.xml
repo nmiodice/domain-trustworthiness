@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.iodice.domain-trustworthiness</groupId>
-  <artifactId>crawler</artifactId>
+  <artifactId>webserver</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <build>
@@ -20,7 +20,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.iodice.crawler.Application</mainClass>
+              <mainClass>Application</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -37,27 +37,7 @@
     </plugins>
   </build>
 
-  <repositories>
-    <repository>
-      <id>onebeartoe</id>
-      <name>onebeartoe</name>
-      <url>https://repository-onebeartoe.forge.cloudbees.com/snapshot/</url>
-    </repository>
-  </repositories>
-
   <dependencies>
-    <!--web webcrawler implementation-->
-    <dependency>
-      <groupId>edu.uci.ics</groupId>
-      <artifactId>crawler4j</artifactId>
-      <version>4.3-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>com.iodice</groupId>
@@ -66,40 +46,21 @@
     </dependency>
 
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.16.14</version>
-      <scope>provided</scope>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-core</artifactId>
+      <version>1.2.11.Final</version>
     </dependency>
 
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>19.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <groupId>io.undertow</groupId>
+      <artifactId>undertow-servlet</artifactId>
+      <version>1.2.11.Final</version>
     </dependency>
 
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongodb-driver</artifactId>
       <version>3.4.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-sqs</artifactId>
-      <version>1.11.97</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.5</version>
     </dependency>
 
   </dependencies>
