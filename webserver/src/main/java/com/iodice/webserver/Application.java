@@ -1,6 +1,7 @@
 package com.iodice.webserver;
 
 import com.iodice.config.Config;
+import com.iodice.webserver.http.PageRankRequestHandler;
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
 import org.apache.commons.logging.Log;
@@ -11,6 +12,8 @@ public class Application {
     private static final String PAGE_RANK_PATH = "/pagerank";
 
     public static void main(final String[] args) {
+        Config.init("config.db", "config.webserver");
+
         logger.info("building HTTP server");
         PathHandler handler = new PathHandler();
         handler.addPrefixPath(PAGE_RANK_PATH, new PageRankRequestHandler());
@@ -18,10 +21,7 @@ public class Application {
         String host = Config.getString("server.conn.host");
         Integer port = Config.getInt("server.conn.port");
 
-        Undertow server = Undertow.builder()
-            .addHttpListener(port, host)
-            .setHandler(handler)
-            .build();
+        Undertow server = Undertow.builder().addHttpListener(port, host).setHandler(handler).build();
 
         logger.info("starting HTTP server on " + host + ":" + port);
         server.start();

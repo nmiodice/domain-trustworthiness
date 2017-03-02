@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.iodice.domain-trustworthiness</groupId>
-  <artifactId>webserver</artifactId>
+  <groupId>com.iodice</groupId>
+  <artifactId>pagerankstore</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <build>
@@ -17,12 +17,6 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.iodice.webserver.Application</mainClass>
-            </manifest>
-          </archive>
         </configuration>
       </plugin>
 
@@ -46,46 +40,15 @@
     </dependency>
 
     <dependency>
-      <groupId>io.undertow</groupId>
-      <artifactId>undertow-core</artifactId>
-      <version>1.2.11.Final</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.undertow</groupId>
-      <artifactId>undertow-servlet</artifactId>
-      <version>1.2.11.Final</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.iodice</groupId>
-      <artifactId>pagerankstore</artifactId>
-      <version>1.0</version>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver</artifactId>
+      <version>3.4.2</version>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.7.5</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.8.7</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.16.14</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>19.0</version>
     </dependency>
 
   </dependencies>

@@ -5,7 +5,7 @@ import com.iodice.crawler.webcrawler.CrawlerController;
 import com.iodice.crawler.webcrawler.CrawlerException;
 import com.iodice.crawler.webcrawler.PageGraph;
 import com.iodice.crawler.pagerank.PageRankCalculator;
-import com.iodice.crawler.persistence.PageRankStore;
+import com.iodice.crawler.persistence.PageRankStoreAdaptor;
 import com.iodice.crawler.queue.EventQueueListener;
 import com.iodice.crawler.queue.PageRankJobParams;
 import com.iodice.crawler.queue.EventListenerException;
@@ -19,6 +19,8 @@ public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
+        Config.init("config.db", "config.crawler");
+
         EventQueueListener listener = new EventQueueListener();
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -42,7 +44,7 @@ public class Application {
                 PageGraph graph = controller.getPageGraph();
                 PageRankCalculator pageRankCalculator = PageRankCalculator.builder().graph(graph).build();
 
-                PageRankStore store = new PageRankStore();
+                PageRankStoreAdaptor store = new PageRankStoreAdaptor();
                 store.deleteAll();
                 store.store(pageRankCalculator.calculatePageRank(30), graph);
             } catch (EventListenerException | CrawlerException | InterruptedException e) {

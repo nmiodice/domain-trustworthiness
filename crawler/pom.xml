@@ -66,6 +66,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.iodice</groupId>
+      <artifactId>pagerankstore</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.16.14</version>
@@ -82,12 +88,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mongodb</groupId>
-      <artifactId>mongodb-driver</artifactId>
-      <version>3.4.2</version>
     </dependency>
 
     <dependency>

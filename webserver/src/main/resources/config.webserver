@@ -1,0 +1,3 @@
+server.conn.host = 0.0.0.0
+server.conn.port = 80
+server.query.params.domain = domain

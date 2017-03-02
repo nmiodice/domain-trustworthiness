@@ -1,7 +1,3 @@
-server.conn.host = 0.0.0.0
-server.conn.port = 8080
-server.header.domain = domain
-
 db.meta.host = ec2-54-89-3-235.compute-1.amazonaws.com
 db.meta.db_name = CrawlerStore
 db.meta.page_rank_collection_name = PageRank
