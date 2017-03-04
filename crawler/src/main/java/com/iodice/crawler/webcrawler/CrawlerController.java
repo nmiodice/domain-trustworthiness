@@ -16,11 +16,10 @@ import java.util.List;
 
 public class CrawlerController {
     private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
-    private static final int REQUEST_DELAY = 250;
 
     private List<String> seeds;
     private CrawlController controller;
-    private String storageDirectory = Config.getString("webcrawler.storage_directory");
+    private String storageDirectory = Config.getString("crawler.storage_directory");
 
     @Getter
     private PageGraph pageGraph;
@@ -31,9 +30,9 @@ public class CrawlerController {
 
     public CrawlerController(List<String> seeds) {
         this();
-        Validate.notNull(seeds, "cannot initialize com.iodice.webcrawler with null seed list");
-        Validate.isFalse(seeds.isEmpty(), "cannot initialize com.iodice.webcrawler with 0 seeds");
-        Validate.noNullElements(seeds.toArray(), "cannot initialize com.iodice.webcrawler with null seed elements");
+        Validate.notNull(seeds, "cannot initialize webcrawler with null seed list");
+        Validate.isFalse(seeds.isEmpty(), "cannot initialize webcrawler with 0 seeds");
+        Validate.noNullElements(seeds.toArray(), "cannot initialize webcrawler with null seed elements");
         this.seeds = seeds;
     }
 
@@ -50,7 +49,7 @@ public class CrawlerController {
 
         try {
             controller = buildCrawlerController();
-            controller.startNonBlocking(new PageVisitorFactory(pageGraph), 1);
+            controller.startNonBlocking(new PageVisitorFactory(pageGraph), 10);
             logger.info("webcrawler started");
         } catch (Exception e) {
             logger.error("webcrawler could not be started: " + e.getMessage(), e);
@@ -61,13 +60,13 @@ public class CrawlerController {
     private CrawlConfig buildCrawlerConfiguration() {
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(storageDirectory);
-        config.setPolitenessDelay(REQUEST_DELAY);
+        config.setPolitenessDelay(100);
         config.setResumableCrawling(false);
         config.setFollowRedirects(true);
         config.setIncludeBinaryContentInCrawling(false);
         config.setIncludeHttpsPages(true);
         config.setShutdownOnEmptyQueue(true);
-        config.setMaxPagesToFetch(-1);
+        config.setMaxDepthOfCrawling(100);
 
         return config;
     }

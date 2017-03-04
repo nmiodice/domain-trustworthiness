@@ -33,7 +33,7 @@ public class Application {
                 PageRankJobParams jobParams = listener.getNextJobParameters();
                 logger.info("got job: " + jobParams);
 
-                CrawlerController controller = new CrawlerController(Config.getStringList("webcrawler.seeds"));
+                CrawlerController controller = new CrawlerController(Config.getStringList("crawler.seeds"));
                 controller.start();
 
                 Thread.sleep(jobParams.getRuntime() * 60 * 1000);
