@@ -76,7 +76,7 @@ public class PageGraph {
     }
 
     public void add(String sourceDomain, String destinationDomain) {
-        add(toPageID(sourceDomain), toPageID(destinationDomain));
+        add(toPageID(sourceDomain.toLowerCase()), toPageID(destinationDomain.toLowerCase()));
     }
 
     private void add(Integer sourcePageID, Integer destinationPageID) {
