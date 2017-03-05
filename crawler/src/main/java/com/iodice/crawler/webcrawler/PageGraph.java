@@ -1,6 +1,9 @@
 package com.iodice.crawler.webcrawler;
 
 import com.google.common.collect.Sets;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,19 +14,25 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PageGraph {
+    private static final DB db = DBMaker.memoryDB().make();
+    private static final String DOMAIN_TO_PAGE_ID_DB_NAME = "domain-to-page-id";
+    private static final String PAGE_ID_TO_DOMAIN_DB_NAME = "page-id-to-domain";
 
-    private final ConcurrentMap<Integer, Set<Integer>> forwardMap;
-    private final ConcurrentMap<Integer, Set<Integer>> reverseMap;
+    private final Map<Integer, Set<Integer>> forwardMap;
+    private final Map<Integer, Set<Integer>> reverseMap;
     private final AtomicInteger nextID;
+
     private final ConcurrentMap<String, Integer> domainToPageID;
-    private final ConcurrentMap<Integer, String> pageIDtoDomain;
+    private final Map<Integer, String> pageIDtoDomain;
 
     public PageGraph() {
+        nextID = new AtomicInteger(0);
+
         forwardMap = new ConcurrentHashMap<>();
         reverseMap = new ConcurrentHashMap<>();
-        nextID = new AtomicInteger(0);
-        domainToPageID = new ConcurrentHashMap<>();
-        pageIDtoDomain = new ConcurrentHashMap<>();
+
+        domainToPageID = db.hashMap(DOMAIN_TO_PAGE_ID_DB_NAME, Serializer.STRING, Serializer.INTEGER).createOrOpen();
+        pageIDtoDomain = db.hashMap(PAGE_ID_TO_DOMAIN_DB_NAME, Serializer.INTEGER, Serializer.STRING).createOrOpen();
     }
 
     /**

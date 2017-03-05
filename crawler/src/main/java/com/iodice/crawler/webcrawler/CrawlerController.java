@@ -74,7 +74,12 @@ public class CrawlerController {
     private CrawlController buildCrawlerController() throws Exception {
         CrawlConfig config = buildCrawlerConfiguration();
         PageFetcher pageFetcher = new PageFetcher(config);
-        RobotstxtServer robotstxtServer = new RobotstxtServer(new RobotstxtConfig(), pageFetcher);
+
+        // RobotstxtServer is a memory hog if enabled
+        RobotstxtConfig robotsTxtConfig = new RobotstxtConfig();
+        robotsTxtConfig.setEnabled(false);
+
+        RobotstxtServer robotstxtServer = new RobotstxtServer(robotsTxtConfig, pageFetcher);
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
         for (String seed : seeds) {
