@@ -20,12 +20,24 @@ public class Application {
 
     private static void runCrawler(int minutes) throws InterruptedException, CrawlerException {
         CrawlerController controller = new CrawlerController(Config.getStringList("crawler.seeds"));
+        PageGraph graph = controller.getPageGraph();
+
         controller.start();
 
-        Thread.sleep(minutes * 60 * 1000);
+        long sleepTimeMS = minutes * 60 * 1000;
+        long startTimeMS = System.currentTimeMillis();
+        long waitTime = 20 * 1000;
+        long sleepTimeSoFarMS = 0;
+
+        while (sleepTimeSoFarMS < sleepTimeMS) {
+            Thread.sleep(waitTime);
+            sleepTimeSoFarMS = System.currentTimeMillis() - startTimeMS;
+            double sleepTimeSoFarMin = sleepTimeSoFarMS / 1000.0 / 60.0;
+            logger.info("after sleeping for " + sleepTimeSoFarMin + " minutes, page graph has " + graph.size() + " nodes");
+        }
+
         controller.stop();
 
-        PageGraph graph = controller.getPageGraph();
         PageRankCalculator pageRankCalculator = PageRankCalculator.builder().graph(graph).build();
 
         PageRankStoreAdaptor store = new PageRankStoreAdaptor();
