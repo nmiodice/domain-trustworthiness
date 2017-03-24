@@ -1,6 +1,5 @@
 package com.iodice.crawler.pagegraph;
 
-
 import java.util.Set;
 
 public interface PageGraph {
@@ -11,7 +10,6 @@ public interface PageGraph {
     static PageGraph mapDBBackedPageGraph() {
         return new MapDBPageGraph();
     }
-
 
     void addReverseDanglingPageLinks();
 

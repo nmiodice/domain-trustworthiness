@@ -8,15 +8,16 @@ import org.junit.Test;
  * Created by nickio on 3/23/17.
  */
 public class PageGraphTest {
-    private static final int PAGE_COUNT = 1000;
-    private static final int OUT_DEGREE = 5;
+    private static final int PAGE_COUNT = 100000;
+    private static final int OUT_DEGREE = 50;
 
     private double msToS(long s, long e) {
         return (e - s) / 1000.0;
     }
+
     @Test
     public void stressTest() throws Exception {
-        PageGraph pg = PageGraph.berkeleyBackedPageGraph();
+        PageGraph pg = PageGraph.mapDBBackedPageGraph();
         long start, end;
 
         // adding elements to graph
@@ -40,5 +41,7 @@ public class PageGraphTest {
         PageRank rank = calc.calculatePageRank(30);
         end = System.currentTimeMillis();
         System.out.println("calculatePageRank: " + msToS(start, end));
+
+        Thread.sleep(60 * 1000);
     }
 }

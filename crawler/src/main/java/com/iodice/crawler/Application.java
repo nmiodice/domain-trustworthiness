@@ -9,7 +9,6 @@ import com.iodice.crawler.queue.EventQueueListener;
 import com.iodice.crawler.queue.PageRankJobParams;
 import com.iodice.crawler.webcrawler.CrawlerController;
 import com.iodice.crawler.webcrawler.CrawlerException;
-import com.iodice.crawler.pagegraph.BerkeleyDBPageGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,8 @@ public class Application {
             Thread.sleep(waitTime);
             sleepTimeSoFarMS = System.currentTimeMillis() - startTimeMS;
             double sleepTimeSoFarMin = sleepTimeSoFarMS / 1000.0 / 60.0;
-            logger.info("after sleeping for " + sleepTimeSoFarMin + " minutes, page graph has " + graph.size() + " nodes");
+            logger.info(
+                "after sleeping for " + sleepTimeSoFarMin + " minutes, page graph has " + graph.size() + " nodes");
         }
 
         controller.stop();

@@ -1,22 +1,13 @@
 package com.iodice.crawler.persistence;
 
 import com.google.common.io.Files;
-import com.iodice.crawler.Application;
-import com.sleepycat.je.Cursor;
-import com.sleepycat.je.DatabaseEntry;
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.je.LockMode;
-import com.sleepycat.je.Transaction;
 import com.sleepycat.persist.EntityCursor;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.PrimaryIndex;
 import com.sleepycat.persist.StoreConfig;
-import com.sleepycat.persist.model.Entity;
-import com.sleepycat.persist.model.PrimaryKey;
-import com.sleepycat.persist.model.SecondaryKey;
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +15,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-
 
 public class PersistentMultiMap {
     private static final Logger logger = LoggerFactory.getLogger(PersistentMultiMap.class);
@@ -87,7 +77,6 @@ public class PersistentMultiMap {
     public int size() {
         return keys().size();
     }
-
 
     public void closeQuietly() {
         closeQuietly(dbStore);

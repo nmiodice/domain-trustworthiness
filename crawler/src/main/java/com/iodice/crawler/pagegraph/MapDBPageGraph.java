@@ -1,7 +1,6 @@
 package com.iodice.crawler.pagegraph;
 
 import com.google.common.collect.Sets;
-import com.iodice.crawler.pagegraph.PageGraph;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;

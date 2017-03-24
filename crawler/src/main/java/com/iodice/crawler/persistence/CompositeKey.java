@@ -7,12 +7,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Persistent
 class CompositeKey {
-    CompositeKey() {
-    }
-
     @KeyField(1)
     Integer first;
-
     @KeyField(2)
     Integer second;
+
+    CompositeKey() {
+    }
 }
