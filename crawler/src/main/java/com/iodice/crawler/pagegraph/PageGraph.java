@@ -11,8 +11,6 @@ public interface PageGraph {
         return new MapDBPageGraph();
     }
 
-    void addReverseDanglingPageLinks();
-
     String domainFromPageID(Integer id);
 
     void add(String sourceDomain, String destinationDomain);
@@ -22,4 +20,6 @@ public interface PageGraph {
     Set<Integer> getPageIDs();
 
     Set<Integer> getOutboundLinks(Integer pageID);
+
+    void addReverseDanglingPageLinks();
 }

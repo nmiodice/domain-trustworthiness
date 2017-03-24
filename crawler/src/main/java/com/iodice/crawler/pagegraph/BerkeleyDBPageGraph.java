@@ -1,39 +1,61 @@
 package com.iodice.crawler.pagegraph;
 
 import com.iodice.crawler.persistence.PersistentMultiMap;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.Serializer;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class BerkeleyDBPageGraph implements PageGraph {
-    private final DB db = DBMaker.tempFileDB().make();
-
-    private final AtomicInteger nextID;
-
     private final PersistentMultiMap forwardLinkMap;
     private final PersistentMultiMap reverseLinkMap;
 
-    private final Map<String, Integer> domainToPageID;
-    private final Map<Integer, String> pageIDtoDomain;
+    private PageGraphUtil pageGraphUtil;
 
     BerkeleyDBPageGraph() throws PageGraphException {
-        nextID = new AtomicInteger(0);
-
         try {
             forwardLinkMap = new PersistentMultiMap();
             reverseLinkMap = new PersistentMultiMap();
+            pageGraphUtil = new PageGraphUtil();
         } catch (Exception e) {
             throw new PageGraphException("error initializing graph: " + e.getMessage(), e);
         }
+    }
 
-        domainToPageID = db.hashMap("domain-to-page-id", Serializer.STRING, Serializer.INTEGER).createOrOpen();
-        pageIDtoDomain = db.hashMap("page-id-to-domain", Serializer.INTEGER, Serializer.STRING).createOrOpen();
+    @Override
+    public String domainFromPageID(Integer id) {
+        return pageGraphUtil.domain(id);
+    }
+
+    @Override
+    public void add(String sourceDomain, String destinationDomain) {
+        add(pageGraphUtil.toPageID(sourceDomain.toLowerCase()),
+            pageGraphUtil.toPageID(destinationDomain.toLowerCase()));
+    }
+
+    private void add(Integer sourcePageID, Integer destinationPageID) {
+        addLink(sourcePageID, destinationPageID, forwardLinkMap);
+        addLink(destinationPageID, sourcePageID, reverseLinkMap);
+    }
+
+    private void addLink(Integer source, Integer destination, PersistentMultiMap container) {
+        container.put(source, destination);
+    }
+
+    @Override
+    public int size() {
+        return forwardLinkMap.size();
+    }
+
+    @Override
+    public Set<Integer> getPageIDs() {
+        return new HashSet<>(forwardLinkMap.keys());
+    }
+
+    @Override
+    public Set<Integer> getOutboundLinks(Integer pageID) {
+        return new HashSet<>(forwardLinkMap.get(pageID));
     }
 
     /**
@@ -60,50 +82,5 @@ public class BerkeleyDBPageGraph implements PageGraph {
                 add(sourceID, destinationID);
             }
         }
-    }
-
-    private Integer toPageID(String domain) {
-        synchronized (domainToPageID) {
-            if (!domainToPageID.containsKey(domain)) {
-                Integer id = nextID.getAndIncrement();
-                domainToPageID.put(domain, id);
-                pageIDtoDomain.put(id, domain);
-            }
-            return domainToPageID.get(domain);
-        }
-    }
-
-    @Override
-    public String domainFromPageID(Integer id) {
-        return pageIDtoDomain.get(id);
-    }
-
-    @Override
-    public void add(String sourceDomain, String destinationDomain) {
-        add(toPageID(sourceDomain.toLowerCase()), toPageID(destinationDomain.toLowerCase()));
-    }
-
-    private void add(Integer sourcePageID, Integer destinationPageID) {
-        addLink(sourcePageID, destinationPageID, forwardLinkMap);
-        addLink(destinationPageID, sourcePageID, reverseLinkMap);
-    }
-
-    private void addLink(Integer source, Integer destination, PersistentMultiMap container) {
-        container.put(source, destination);
-    }
-
-    @Override
-    public int size() {
-        return forwardLinkMap.size();
-    }
-
-    @Override
-    public Set<Integer> getPageIDs() {
-        return new HashSet<>(forwardLinkMap.keys());
-    }
-
-    @Override
-    public Set<Integer> getOutboundLinks(Integer pageID) {
-        return new HashSet<>(forwardLinkMap.get(pageID));
     }
 }

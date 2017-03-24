@@ -4,9 +4,7 @@ import com.iodice.crawler.pagerank.PageRank;
 import com.iodice.crawler.pagerank.PageRankCalculator;
 import org.junit.Test;
 
-/**
- * Created by nickio on 3/23/17.
- */
+
 public class PageGraphTest {
     private static final int PAGE_COUNT = 100000;
     private static final int OUT_DEGREE = 50;
