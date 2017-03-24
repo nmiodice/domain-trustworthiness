@@ -5,7 +5,7 @@ import com.iodice.crawler.pagerank.PageRankCalculator;
 import org.junit.Test;
 
 public class PageGraphTest {
-    private static final int PAGE_COUNT = 100000;
+    private static final int PAGE_COUNT = 1000;
     private static final int OUT_DEGREE = 50;
 
     private double msToS(long s, long e) {
@@ -14,7 +14,7 @@ public class PageGraphTest {
 
     @Test
     public void stressTest() throws Exception {
-        PageGraph pg = PageGraph.mapDBBackedPageGraph();
+        PageGraph pg = PageGraph.fileBackedPageGraph();
         long start, end;
 
         // adding elements to graph

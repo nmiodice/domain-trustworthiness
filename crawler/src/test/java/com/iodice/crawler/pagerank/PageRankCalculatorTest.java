@@ -17,7 +17,7 @@ public class PageRankCalculatorTest {
     public static void init() throws Exception {
         Config.init("config.crawler");
 
-        simpleGraph = PageGraph.hashMapBackedPageGraph();
+        simpleGraph = PageGraph.fileBackedPageGraph();
 
         simpleGraph.add("www.a.com", "www.b.com");
         simpleGraph.add("www.b.com", "www.c.com");
