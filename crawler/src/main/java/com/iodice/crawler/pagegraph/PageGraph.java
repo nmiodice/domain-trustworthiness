@@ -11,6 +11,10 @@ public interface PageGraph {
         return new MapDBPageGraph();
     }
 
+    static PageGraph hashMapBackedPageGraph() {
+        return new HashMapPageGraph();
+    }
+
     String domainFromPageID(Integer id);
 
     void add(String sourceDomain, String destinationDomain);
