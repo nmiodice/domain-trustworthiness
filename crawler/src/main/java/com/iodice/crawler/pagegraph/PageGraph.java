@@ -1,11 +1,17 @@
 package com.iodice.crawler.pagegraph;
 
+
 import java.util.Set;
 
 public interface PageGraph {
-    static PageGraph berkelyBackedPageGraph() throws PageGraphException {
+    static PageGraph berkeleyBackedPageGraph() throws PageGraphException {
         return new BerkeleyDBPageGraph();
     }
+
+    static PageGraph mapDBBackedPageGraph() {
+        return new MapDBPageGraph();
+    }
+
 
     void addReverseDanglingPageLinks();
 

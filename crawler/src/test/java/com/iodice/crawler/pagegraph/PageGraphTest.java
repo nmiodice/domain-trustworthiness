@@ -16,7 +16,7 @@ public class PageGraphTest {
     }
     @Test
     public void stressTest() throws Exception {
-        BerkeleyDBPageGraph pg = new BerkeleyDBPageGraph();
+        PageGraph pg = PageGraph.berkeleyBackedPageGraph();
         long start, end;
 
         // adding elements to graph
