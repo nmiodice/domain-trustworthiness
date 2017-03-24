@@ -17,7 +17,7 @@ public class PageRankCalculatorTest {
     public static void init() throws Exception {
         Config.init("config.crawler");
 
-        simpleGraph = new PageGraph();
+        simpleGraph = PageGraph.berkelyBackedPageGraph();
 
         simpleGraph.add("www.a.com", "www.b.com");
         simpleGraph.add("www.b.com", "www.c.com");

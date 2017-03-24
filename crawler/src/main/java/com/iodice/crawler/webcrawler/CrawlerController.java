@@ -43,7 +43,7 @@ public class CrawlerController {
         }
 
         try {
-            this.pageGraph = new PageGraph();
+            this.pageGraph = PageGraph.berkelyBackedPageGraph();
         } catch (Exception e) {
             throw new CrawlerException("error initializing page graph", e);
         }

@@ -4,8 +4,6 @@ import com.iodice.crawler.pagerank.PageRank;
 import com.iodice.crawler.pagerank.PageRankCalculator;
 import org.junit.Test;
 
-import java.util.concurrent.Callable;
-
 /**
  * Created by nickio on 3/23/17.
  */
@@ -18,7 +16,7 @@ public class PageGraphTest {
     }
     @Test
     public void stressTest() throws Exception {
-        PageGraph pg = new PageGraph();
+        BerkeleyDBPageGraph pg = new BerkeleyDBPageGraph();
         long start, end;
 
         // adding elements to graph

@@ -1,6 +1,7 @@
 package com.iodice.crawler;
 
 import com.iodice.config.Config;
+import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagerank.PageRankCalculator;
 import com.iodice.crawler.persistence.PageRankStoreAdaptor;
 import com.iodice.crawler.queue.EventListenerException;
@@ -8,7 +9,7 @@ import com.iodice.crawler.queue.EventQueueListener;
 import com.iodice.crawler.queue.PageRankJobParams;
 import com.iodice.crawler.webcrawler.CrawlerController;
 import com.iodice.crawler.webcrawler.CrawlerException;
-import com.iodice.crawler.pagegraph.PageGraph;
+import com.iodice.crawler.pagegraph.BerkeleyDBPageGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
