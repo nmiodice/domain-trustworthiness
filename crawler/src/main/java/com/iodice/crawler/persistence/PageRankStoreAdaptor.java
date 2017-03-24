@@ -1,6 +1,6 @@
 package com.iodice.crawler.persistence;
 
-import com.iodice.crawler.webcrawler.PageGraph;
+import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagerank.PageRank;
 import com.iodice.persistence.PageRankStore;
 

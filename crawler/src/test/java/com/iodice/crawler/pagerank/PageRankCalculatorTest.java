@@ -1,6 +1,7 @@
 package com.iodice.crawler.pagerank;
 
-import com.iodice.crawler.webcrawler.PageGraph;
+import com.iodice.config.Config;
+import com.iodice.crawler.pagegraph.PageGraph;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -8,12 +9,16 @@ import static org.junit.Assert.assertEquals;
 
 public class PageRankCalculatorTest {
 
-    private static PageGraph simpleGraph = new PageGraph();
+    private static PageGraph simpleGraph;
 
     private static PageRankCalculator simplePageRankCalculator;
 
     @BeforeClass
-    public static void init() {
+    public static void init() throws Exception {
+        Config.init("config.crawler");
+
+        simpleGraph = new PageGraph();
+
         simpleGraph.add("www.a.com", "www.b.com");
         simpleGraph.add("www.b.com", "www.c.com");
         simpleGraph.add("www.c.com", "www.d.com");

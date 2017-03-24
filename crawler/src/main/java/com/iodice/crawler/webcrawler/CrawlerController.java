@@ -1,6 +1,7 @@
 package com.iodice.crawler.webcrawler;
 
 import com.iodice.config.Config;
+import com.iodice.crawler.pagegraph.PageGraph;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -25,7 +26,6 @@ public class CrawlerController {
     private PageGraph pageGraph;
 
     private CrawlerController() {
-        this.pageGraph = new PageGraph();
     }
 
     public CrawlerController(List<String> seeds) {
@@ -40,6 +40,12 @@ public class CrawlerController {
         logger.info("starting webcrawler");
         if (controller != null) {
             throw new IllegalStateException("webcrawler already started");
+        }
+
+        try {
+            this.pageGraph = new PageGraph();
+        } catch (Exception e) {
+            throw new CrawlerException("error initializing page graph", e);
         }
 
         File storage = new File(storageDirectory);

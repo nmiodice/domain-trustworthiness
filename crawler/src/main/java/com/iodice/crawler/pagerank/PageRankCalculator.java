@@ -1,6 +1,6 @@
 package com.iodice.crawler.pagerank;
 
-import com.iodice.crawler.webcrawler.PageGraph;
+import com.iodice.crawler.pagegraph.PageGraph;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;

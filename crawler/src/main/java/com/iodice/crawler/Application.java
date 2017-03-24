@@ -8,12 +8,9 @@ import com.iodice.crawler.queue.EventQueueListener;
 import com.iodice.crawler.queue.PageRankJobParams;
 import com.iodice.crawler.webcrawler.CrawlerController;
 import com.iodice.crawler.webcrawler.CrawlerException;
-import com.iodice.crawler.webcrawler.PageGraph;
-import org.apache.log4j.PropertyConfigurator;
+import com.iodice.crawler.pagegraph.PageGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.URL;
 
 public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
