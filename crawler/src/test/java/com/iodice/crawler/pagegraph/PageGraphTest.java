@@ -14,7 +14,7 @@ public class PageGraphTest {
 
     @Test
     public void stressTest() throws Exception {
-        PageGraph pg = PageGraph.fileBackedPageGraph();
+        PageGraph pg = PageGraphFactory.fileBackedPageGraph();
         long start, end;
 
         // adding elements to graph
@@ -34,7 +34,7 @@ public class PageGraphTest {
         System.out.println("addReverseDanglingPageLinks: " + msToS(start, end));
 
         start = System.currentTimeMillis();
-        PageRankCalculator calc = PageRankCalculator.builder().graph(pg).build();
+        PageRankCalculator calc = new PageRankCalculator(pg);
         PageRank rank = calc.calculatePageRank(30);
         end = System.currentTimeMillis();
         System.out.println("calculatePageRank: " + msToS(start, end));

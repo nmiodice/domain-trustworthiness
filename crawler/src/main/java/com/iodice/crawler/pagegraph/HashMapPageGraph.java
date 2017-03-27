@@ -8,10 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HashMapPageGraph implements PageGraph {
+public class HashMapPageGraph extends BasePageGraph {
     private final Map<Integer, Set<Integer>> forwardMap;
     private final Map<Integer, Set<Integer>> reverseMap;
-    private PageGraphUtil pageGraphUtil;
 
     HashMapPageGraph() {
         forwardMap = new ConcurrentHashMap<>();
@@ -19,10 +18,7 @@ public class HashMapPageGraph implements PageGraph {
         pageGraphUtil = new PageGraphUtil();
     }
 
-    public String domainFromPageID(Integer id) {
-        return pageGraphUtil.domain(id);
-    }
-
+    @Override
     public void add(String sourceDomain, String destinationDomain) {
         add(pageGraphUtil.toPageID(sourceDomain.toLowerCase()),
             pageGraphUtil.toPageID(destinationDomain.toLowerCase()));

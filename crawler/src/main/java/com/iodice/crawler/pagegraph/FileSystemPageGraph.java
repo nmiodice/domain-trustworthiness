@@ -10,15 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class FileSystemPageGraph implements PageGraph {
-
-    private PageGraphUtil pageGraphUtil = new PageGraphUtil();
+public class FileSystemPageGraph extends BasePageGraph {
     private Path homePath = Files.createTempDir().toPath();
-
-    @Override
-    public String domainFromPageID(Integer id) {
-        return pageGraphUtil.domain(id);
-    }
 
     @Override
     @SneakyThrows
@@ -48,9 +41,7 @@ public class FileSystemPageGraph implements PageGraph {
         if (files == null) {
             return Collections.emptySet();
         }
-        return Arrays.stream(files)
-            .map(Integer::valueOf)
-            .collect(Collectors.toCollection(HashSet::new));
+        return Arrays.stream(files).map(Integer::valueOf).collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override

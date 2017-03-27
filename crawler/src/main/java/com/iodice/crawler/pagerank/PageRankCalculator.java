@@ -1,18 +1,24 @@
 package com.iodice.crawler.pagerank;
 
 import com.iodice.crawler.pagegraph.PageGraph;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
 
-@Builder
 @Getter
 public class PageRankCalculator {
 
     public static final double DAMPING_FACTOR = 0.85;
 
-    @NonNull
     private PageGraph graph;
+    /**
+     * count of nodes. this is a double because whenever it needs to be used to produce fractional values in
+     * mathematical calculations
+     */
+    private double nodeCount;
+
+    public PageRankCalculator(PageGraph graph) {
+        this.graph = graph;
+        this.nodeCount = graph.size();
+    }
 
     public PageRank calculatePageRank(int iterationCount) {
         graph.addReverseDanglingPageLinks();
@@ -26,9 +32,8 @@ public class PageRankCalculator {
 
     PageRank getInitialPageRank() {
         PageRank pageRank = new PageRank();
-        double numPages = graph.size();
         for (Integer pageID : graph.getPageIDs()) {
-            pageRank.setRank(pageID, 1.0 / numPages);
+            pageRank.setRank(pageID, 1.0 / nodeCount);
         }
         return pageRank;
     }
@@ -39,9 +44,10 @@ public class PageRankCalculator {
 
     PageRank applyDamping(PageRank incoming) {
         PageRank outgoing = new PageRank();
+        double basePageRankAddition = (1.0 - DAMPING_FACTOR) / nodeCount;
 
         for (Integer pageID : incoming.getPageIDs()) {
-            double dampenedValue = (1.0 - DAMPING_FACTOR) / graph.size() + DAMPING_FACTOR * incoming.getRank(pageID);
+            double dampenedValue = basePageRankAddition + DAMPING_FACTOR * incoming.getRank(pageID);
             outgoing.setRank(pageID, dampenedValue);
         }
 

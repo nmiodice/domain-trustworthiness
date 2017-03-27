@@ -2,6 +2,7 @@ package com.iodice.crawler.webcrawler;
 
 import com.iodice.config.Config;
 import com.iodice.crawler.pagegraph.PageGraph;
+import com.iodice.crawler.pagegraph.PageGraphFactory;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -43,7 +44,7 @@ public class CrawlerController {
         }
 
         try {
-            this.pageGraph = PageGraph.berkeleyBackedPageGraph();
+            this.pageGraph = PageGraphFactory.berkeleyBackedPageGraph();
         } catch (Exception e) {
             throw new CrawlerException("error initializing page graph", e);
         }

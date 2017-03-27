@@ -36,7 +36,7 @@ public class Application {
 
         controller.stop();
 
-        PageRankCalculator pageRankCalculator = PageRankCalculator.builder().graph(graph).build();
+        PageRankCalculator pageRankCalculator = new PageRankCalculator(graph);
 
         PageRankStoreAdaptor store = new PageRankStoreAdaptor();
         store.deleteAll();

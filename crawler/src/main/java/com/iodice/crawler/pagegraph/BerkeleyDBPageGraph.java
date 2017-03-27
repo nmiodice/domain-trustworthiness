@@ -7,11 +7,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class BerkeleyDBPageGraph implements PageGraph {
+public class BerkeleyDBPageGraph extends BasePageGraph {
     private final PersistentMultiMap forwardLinkMap;
     private final PersistentMultiMap reverseLinkMap;
-
-    private PageGraphUtil pageGraphUtil;
 
     BerkeleyDBPageGraph() throws PageGraphException {
         try {
@@ -21,11 +19,6 @@ public class BerkeleyDBPageGraph implements PageGraph {
         } catch (Exception e) {
             throw new PageGraphException("error initializing graph: " + e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String domainFromPageID(Integer id) {
-        return pageGraphUtil.domain(id);
     }
 
     @Override
