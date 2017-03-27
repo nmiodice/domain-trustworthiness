@@ -7,10 +7,6 @@ public interface PageGraph {
         return new BerkeleyDBPageGraph();
     }
 
-    static PageGraph mapDBBackedPageGraph() {
-        return new MapDBPageGraph();
-    }
-
     static PageGraph hashMapBackedPageGraph() {
         return new HashMapPageGraph();
     }

@@ -1,67 +1,82 @@
 package com.iodice.crawler.pagegraph;
 
-import lombok.Getter;
+import com.google.common.collect.Sets;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HashMapPageGraph implements PageGraph {
+    private final Map<Integer, Set<Integer>> forwardMap;
+    private final Map<Integer, Set<Integer>> reverseMap;
     private PageGraphUtil pageGraphUtil;
-    private Map<Integer, Node> nodes;
 
     HashMapPageGraph() {
+        forwardMap = new ConcurrentHashMap<>();
+        reverseMap = new ConcurrentHashMap<>();
         pageGraphUtil = new PageGraphUtil();
-        nodes = new HashMap<>();
     }
 
-    @Override
     public String domainFromPageID(Integer id) {
         return pageGraphUtil.domain(id);
     }
 
-    @Override
     public void add(String sourceDomain, String destinationDomain) {
-        Integer srcID = pageGraphUtil.toPageID(sourceDomain);
-        Integer dstID = pageGraphUtil.toPageID(destinationDomain);
+        add(pageGraphUtil.toPageID(sourceDomain.toLowerCase()),
+            pageGraphUtil.toPageID(destinationDomain.toLowerCase()));
+    }
 
-        nodes.putIfAbsent(srcID, new Node());
-        nodes.get(srcID).getOutgoing().add(dstID);
+    private void add(Integer sourcePageID, Integer destinationPageID) {
+        addLink(sourcePageID, destinationPageID, forwardMap);
+        addLink(destinationPageID, sourcePageID, reverseMap);
+    }
 
-        nodes.putIfAbsent(dstID, new Node());
-        nodes.get(dstID).getIncoming().add(srcID);
+    private void addLink(Integer source, Integer destination, Map<Integer, Set<Integer>> container) {
+        container.putIfAbsent(source, Sets.newConcurrentHashSet());
+        container.get(source).add(destination);
+        container.putIfAbsent(destination, Sets.newConcurrentHashSet());
     }
 
     @Override
     public int size() {
-        return nodes.size();
+        return forwardMap.size();
     }
 
     @Override
     public Set<Integer> getPageIDs() {
-        return nodes.keySet();
+        return new HashSet<>(forwardMap.keySet());
     }
 
     @Override
     public Set<Integer> getOutboundLinks(Integer pageID) {
-        return nodes.containsKey(pageID) ? nodes.get(pageID).getIncoming() : Collections.emptySet();
+        return new HashSet<>(forwardMap.get(pageID));
     }
 
+    /**
+     * for each of the dangling pages (a page that is pointed to, but points to no pages),
+     * add a link from the dangling page to each of the pages that point to it
+     */
     @Override
     public void addReverseDanglingPageLinks() {
-        for (Integer pageID : nodes.keySet()) {
-            if (nodes.get(pageID).getOutgoing().isEmpty()) {
-                nodes.get(pageID).getOutgoing().addAll(nodes.get(pageID).getIncoming());
+        // collect into a new map, then use an API call to add the data so that the forward and reverse
+        // maps remain consistent with each other
+        Map<Integer, Set<Integer>> toAdd = new HashMap<>();
+
+        for (Integer pageID : forwardMap.keySet()) {
+            if (forwardMap.get(pageID).isEmpty()) {
+                for (Integer pointingToDanglingPage : reverseMap.get(pageID)) {
+                    toAdd.putIfAbsent(pageID, new HashSet<>());
+                    toAdd.get(pageID).add(pointingToDanglingPage);
+                }
             }
         }
-    }
 
-    private class Node {
-        @Getter
-        private Set<Integer> incoming = new HashSet<>();
-        @Getter
-        private Set<Integer> outgoing = new HashSet<>();
+        for (Integer sourceID : toAdd.keySet()) {
+            for (Integer destinationID : toAdd.get(sourceID)) {
+                add(sourceID, destinationID);
+            }
+        }
     }
 }
