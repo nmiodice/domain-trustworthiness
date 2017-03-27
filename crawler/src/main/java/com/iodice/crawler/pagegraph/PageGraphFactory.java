@@ -12,4 +12,8 @@ public class PageGraphFactory {
     public static PageGraph fileBackedPageGraph() {
         return new FileSystemPageGraph();
     }
+
+    public static PageGraph cachedReadOnlyPageGraph(PageGraph graph) {
+        return new CachedPageGraph(graph);
+    }
 }

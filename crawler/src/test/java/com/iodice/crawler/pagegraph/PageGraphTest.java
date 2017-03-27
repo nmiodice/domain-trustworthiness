@@ -5,7 +5,7 @@ import com.iodice.crawler.pagerank.PageRankCalculator;
 import org.junit.Test;
 
 public class PageGraphTest {
-    private static final int PAGE_COUNT = 1000;
+    private static final int PAGE_COUNT = 100000;
     private static final int OUT_DEGREE = 50;
 
     private double msToS(long s, long e) {
@@ -14,7 +14,7 @@ public class PageGraphTest {
 
     @Test
     public void stressTest() throws Exception {
-        PageGraph pg = PageGraphFactory.fileBackedPageGraph();
+        PageGraph pg = PageGraphFactory.berkeleyBackedPageGraph();
         long start, end;
 
         // adding elements to graph
@@ -33,12 +33,20 @@ public class PageGraphTest {
         end = System.currentTimeMillis();
         System.out.println("addReverseDanglingPageLinks: " + msToS(start, end));
 
-        start = System.currentTimeMillis();
-        PageRankCalculator calc = new PageRankCalculator(pg);
-        PageRank rank = calc.calculatePageRank(30);
-        end = System.currentTimeMillis();
-        System.out.println("calculatePageRank: " + msToS(start, end));
+//        start = System.currentTimeMillis();
+//        PageRankCalculator calc = new PageRankCalculator(pg);
+//        calc.calculatePageRank(30);
+//        end = System.currentTimeMillis();
+//        System.out.println("calculatePageRank: " + msToS(start, end));
 
-        Thread.sleep(60 * 1000);
+
+
+        start = System.currentTimeMillis();
+        PageRankCalculator calc = new PageRankCalculator(PageGraphFactory.cachedReadOnlyPageGraph(pg));
+        calc.calculatePageRank(30);
+        end = System.currentTimeMillis();
+        System.out.println("cached calculatePageRank: " + msToS(start, end));
+
+        Thread.sleep(30 * 1000);
     }
 }
