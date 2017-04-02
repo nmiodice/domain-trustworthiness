@@ -1,4 +1,4 @@
-db.meta.host = localhost
+db.meta.host = ec2-54-175-102-232.compute-1.amazonaws.com
 db.meta.db_name = CrawlerStore
 db.meta.page_rank_collection_name = PageRank
 

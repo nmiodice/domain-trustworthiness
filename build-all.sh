@@ -5,6 +5,8 @@ COL_RESET=$ESC_SEQ"39;49;00m"
 COL_RED=$ESC_SEQ"31;01m"
 COL_GREEN=$ESC_SEQ"32;01m"
 
+MVN_INSTALL_CMD="mvn -T 1C install:install-file"
+
 
 BUILD_DIR="$PWD/build/"
 
@@ -17,6 +19,7 @@ function runWithSuccessOrFail() {
         echo "$COL_GREEN succeeded $COL_RESET"
     else
         echo "$COL_RED failed $COL_RESET"
+        exit
     fi
 }
 
@@ -35,7 +38,8 @@ function copyJar() {
 }
 
 function installMavenLocal() {
-    runWithSuccessOrFail "mvn install:install-file -Dfile=$1 -DgroupId=$2 -DartifactId=$3 -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true" "install maven jar"
+    runWithSuccessOrFail "$MVN_INSTALL_CMD -Dfile=$1 -DgroupId=$2 -DartifactId=$3 -Dversion=1.0
+    -Dpackaging=jar -DgeneratePom=true" "install maven jar"
 }
 
 function buildProjectAndCopyJar() {
