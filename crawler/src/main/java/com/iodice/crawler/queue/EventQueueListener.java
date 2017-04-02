@@ -28,7 +28,9 @@ public class EventQueueListener {
         Message queueMessage = getMessageBlocking();
         sqsClient.deleteMessage(queueURL, queueMessage.getReceiptHandle());
         try {
-            return PageRankJobParams.builder().runtime(Integer.parseInt(queueMessage.getBody())).build();
+            return PageRankJobParams.builder()
+                .runtime(Integer.parseInt(queueMessage.getBody()))
+                .build();
         } catch (NumberFormatException e) {
             throw new EventListenerException("bad message format: " + queueMessage.getBody(), e);
         }
@@ -38,7 +40,8 @@ public class EventQueueListener {
         List<Message> messages;
         do {
             logger.info("waiting for messages on queue (" + queueURL + ")");
-            messages = sqsClient.receiveMessage(queueURL).getMessages();
+            messages = sqsClient.receiveMessage(queueURL)
+                .getMessages();
             logger.debug("got " + messages.size() + " messages on queue (" + queueURL + ")");
         } while (messages.isEmpty());
 

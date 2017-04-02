@@ -15,10 +15,6 @@ public class MapDBPageGraph implements PageGraph {
     private NavigableSet<Object[]> graph;
     private PageGraphUtil pageGraphUtil = new PageGraphUtil();
 
-    public enum DBType {
-        MEMORY, FILE
-    }
-
     MapDBPageGraph(DBType type) {
         switch (type) {
         case MEMORY:
@@ -101,5 +97,9 @@ public class MapDBPageGraph implements PageGraph {
         for (Integer pointer : pointingToDangling) {
             add(danglingPageID, pointer);
         }
+    }
+
+    public enum DBType {
+        MEMORY, FILE
     }
 }

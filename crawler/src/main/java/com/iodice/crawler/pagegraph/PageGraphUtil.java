@@ -9,7 +9,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class PageGraphUtil {
-    private static final DB db = DBMaker.memoryDB().make();
+    private static final DB db = DBMaker.memoryDB()
+        .make();
 
     private final ConcurrentMap<String, Integer> domainToPageID;
     private final Map<Integer, String> pageIDtoDomain;

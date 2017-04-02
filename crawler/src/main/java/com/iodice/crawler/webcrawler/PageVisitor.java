@@ -30,7 +30,8 @@ public class PageVisitor extends WebCrawler {
     }
 
     private boolean shouldVisitUrl(String url) {
-        return !FILTERS.matcher(url.toLowerCase()).matches();
+        return !FILTERS.matcher(url.toLowerCase())
+            .matches();
     }
 
     @Override
@@ -41,10 +42,12 @@ public class PageVisitor extends WebCrawler {
             .filter(webUrl -> shouldVisitUrl(webUrl.getURL()))
             .collect(Collectors.toList());
 
-        logger.info("page " + page.getWebURL().getDomain() + " has " + visitableOutgoingLinks.size() + " links");
+        logger.info("page " + page.getWebURL()
+            .getDomain() + " has " + visitableOutgoingLinks.size() + " links");
 
         for (WebURL outgoingURL : visitableOutgoingLinks) {
-            pageGraph.add(page.getWebURL().getDomain(), outgoingURL.getDomain());
+            pageGraph.add(page.getWebURL()
+                .getDomain(), outgoingURL.getDomain());
         }
     }
 }

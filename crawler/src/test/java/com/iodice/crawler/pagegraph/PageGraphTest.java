@@ -1,6 +1,5 @@
 package com.iodice.crawler.pagegraph;
 
-import com.iodice.crawler.pagerank.PageRank;
 import com.iodice.crawler.pagerank.PageRankCalculator;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,13 +34,11 @@ public class PageGraphTest {
         end = System.currentTimeMillis();
         System.out.println("addReverseDanglingPageLinks: " + msToS(start, end));
 
-//        start = System.currentTimeMillis();
-//        PageRankCalculator calc = new PageRankCalculator(pg);
-//        calc.calculatePageRank(30);
-//        end = System.currentTimeMillis();
-//        System.out.println("calculatePageRank: " + msToS(start, end));
-
-
+        //        start = System.currentTimeMillis();
+        //        PageRankCalculator calc = new PageRankCalculator(pg);
+        //        calc.calculatePageRank(30);
+        //        end = System.currentTimeMillis();
+        //        System.out.println("calculatePageRank: " + msToS(start, end));
 
         start = System.currentTimeMillis();
         PageRankCalculator calc = new PageRankCalculator(PageGraphFactory.cachedReadOnlyPageGraph(pg));

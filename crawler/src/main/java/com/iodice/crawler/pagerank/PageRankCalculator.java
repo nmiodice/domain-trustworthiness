@@ -59,7 +59,8 @@ public class PageRankCalculator {
         PageRank outgoing = new PageRank();
 
         for (Integer pageID : graph.getPageIDs()) {
-            double additionalRank = incoming.getRank(pageID) / graph.getOutboundLinks(pageID).size();
+            double additionalRank = incoming.getRank(pageID) / graph.getOutboundLinks(pageID)
+                .size();
 
             for (Integer outgoingPageID : graph.getOutboundLinks(pageID)) {
                 outgoing.setRank(outgoingPageID, outgoing.getRankWithDefault(outgoingPageID, 0.0) + additionalRank);
