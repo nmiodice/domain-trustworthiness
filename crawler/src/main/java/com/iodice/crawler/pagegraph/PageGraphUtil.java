@@ -9,10 +9,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class PageGraphUtil {
-    private static final String DOMAIN_TO_PAGE_ID_DB_NAME = "domain-to-page-id";
-    private static final String PAGE_ID_TO_DOMAIN_DB_NAME = "page-id-to-domain";
-
     private static final DB db = DBMaker.memoryDB().make();
+
     private final ConcurrentMap<String, Integer> domainToPageID;
     private final Map<Integer, String> pageIDtoDomain;
 
@@ -20,8 +18,8 @@ class PageGraphUtil {
 
     PageGraphUtil() {
         nextID = new AtomicInteger(0);
-        domainToPageID = db.hashMap(DOMAIN_TO_PAGE_ID_DB_NAME, Serializer.STRING, Serializer.INTEGER).createOrOpen();
-        pageIDtoDomain = db.hashMap(PAGE_ID_TO_DOMAIN_DB_NAME, Serializer.INTEGER, Serializer.STRING).createOrOpen();
+        domainToPageID = db.hashMap("domain-to-page-id", Serializer.STRING, Serializer.INTEGER);
+        pageIDtoDomain = db.hashMap("page-id-to-domain", Serializer.INTEGER, Serializer.STRING);
     }
 
     Integer toPageID(String domain) {
@@ -37,9 +35,5 @@ class PageGraphUtil {
 
     String domain(Integer i) {
         return pageIDtoDomain.get(i);
-    }
-
-    Integer pageID(String d) {
-        return domainToPageID.get(d);
     }
 }

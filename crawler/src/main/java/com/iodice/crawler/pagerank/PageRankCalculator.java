@@ -16,6 +16,7 @@ public class PageRankCalculator {
     private double nodeCount;
 
     public PageRankCalculator(PageGraph graph) {
+        graph.addReverseDanglingPageLinks();
         this.graph = graph;
         this.nodeCount = graph.size();
     }
@@ -44,7 +45,7 @@ public class PageRankCalculator {
 
     PageRank applyDamping(PageRank incoming) {
         PageRank outgoing = new PageRank();
-        double basePageRankAddition = (1.0 - DAMPING_FACTOR) / nodeCount;
+        double basePageRankAddition = (1.0 - DAMPING_FACTOR) / incoming.size();
 
         for (Integer pageID : incoming.getPageIDs()) {
             double dampenedValue = basePageRankAddition + DAMPING_FACTOR * incoming.getRank(pageID);
@@ -54,7 +55,7 @@ public class PageRankCalculator {
         return outgoing;
     }
 
-    private PageRank doSingleNaiveIteration(PageRank incoming) {
+    PageRank doSingleNaiveIteration(PageRank incoming) {
         PageRank outgoing = new PageRank();
 
         for (Integer pageID : graph.getPageIDs()) {

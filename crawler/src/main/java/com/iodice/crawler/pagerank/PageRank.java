@@ -1,9 +1,12 @@
 package com.iodice.crawler.pagerank;
 
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@ToString
 public class PageRank {
 
     private Map<Integer, Double> map = new HashMap<>();
@@ -24,7 +27,11 @@ public class PageRank {
         return map.keySet();
     }
 
-    HashMap<Integer, Double> toSet() {
+    HashMap<Integer, Double> toMap() {
         return new HashMap<>(map);
+    }
+
+    public int size() {
+        return map.size();
     }
 }

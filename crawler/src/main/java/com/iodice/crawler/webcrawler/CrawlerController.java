@@ -44,7 +44,7 @@ public class CrawlerController {
         }
 
         try {
-            this.pageGraph = PageGraphFactory.berkeleyBackedPageGraph();
+            this.pageGraph = PageGraphFactory.fileDBBackedPageGraph();
         } catch (Exception e) {
             throw new CrawlerException("error initializing page graph", e);
         }
