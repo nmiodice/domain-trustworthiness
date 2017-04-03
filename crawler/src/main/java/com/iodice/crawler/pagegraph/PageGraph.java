@@ -14,5 +14,7 @@ public interface PageGraph {
 
     Set<Integer> getOutboundLinks(Integer pageID);
 
-    void addReverseDanglingPageLinks();
+    PageGraph collectAndRemoveDanglingPages(int iterationCount);
+
+    void merge(PageGraph otherGraph);
 }

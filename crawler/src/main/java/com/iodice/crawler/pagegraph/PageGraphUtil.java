@@ -5,13 +5,13 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class PageGraphUtil {
-    private static final DB db = DBMaker.memoryDB()
-        .make();
 
+    private static final DB db = DBMaker.memoryDB().make();
     private final ConcurrentMap<String, Integer> domainToPageID;
     private final Map<Integer, String> pageIDtoDomain;
 
@@ -19,8 +19,8 @@ class PageGraphUtil {
 
     PageGraphUtil() {
         nextID = new AtomicInteger(0);
-        domainToPageID = db.hashMap("domain-to-page-id", Serializer.STRING, Serializer.INTEGER);
-        pageIDtoDomain = db.hashMap("page-id-to-domain", Serializer.INTEGER, Serializer.STRING);
+        domainToPageID = db.hashMap(UUID.randomUUID().toString(), Serializer.STRING, Serializer.INTEGER);
+        pageIDtoDomain = db.hashMap(UUID.randomUUID().toString(), Serializer.INTEGER, Serializer.STRING);
     }
 
     Integer toPageID(String domain) {

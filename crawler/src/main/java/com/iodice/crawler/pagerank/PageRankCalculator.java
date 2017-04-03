@@ -1,28 +1,26 @@
 package com.iodice.crawler.pagerank;
 
 import com.iodice.crawler.pagegraph.PageGraph;
+import com.iodice.crawler.pagegraph.PageGraphFactory;
 import lombok.Getter;
 
 @Getter
 public class PageRankCalculator {
 
     public static final double DAMPING_FACTOR = 0.85;
+    public static final int DANGLING_REMOVE_ITERATION_COUNT = 10;
 
-    private PageGraph graph;
-    /**
-     * count of nodes. this is a double because whenever it needs to be used to produce fractional values in
-     * mathematical calculations
-     */
-    private double nodeCount;
+    private PageGraph prunedGraphArtifact;
+    private PageGraph prunedGraphCache;
+    private PageGraph prunedGraph;
 
     public PageRankCalculator(PageGraph graph) {
-        graph.addReverseDanglingPageLinks();
-        this.graph = graph;
-        this.nodeCount = graph.size();
+        this.prunedGraphArtifact = graph.collectAndRemoveDanglingPages(DANGLING_REMOVE_ITERATION_COUNT);
+        this.prunedGraph = graph;
+        this.prunedGraphCache = PageGraphFactory.cachedReadOnlyPageGraph(prunedGraph);
     }
 
     public PageRank calculatePageRank(int iterationCount) {
-        graph.addReverseDanglingPageLinks();
         PageRank pageRank = getInitialPageRank();
         for (int i = 0; i < iterationCount; i++) {
             pageRank = doSinglePageRankIteration(pageRank);
@@ -33,8 +31,8 @@ public class PageRankCalculator {
 
     PageRank getInitialPageRank() {
         PageRank pageRank = new PageRank();
-        for (Integer pageID : graph.getPageIDs()) {
-            pageRank.setRank(pageID, 1.0 / nodeCount);
+        for (Integer pageID : prunedGraphCache.getPageIDs()) {
+            pageRank.setRank(pageID, 1.0 / prunedGraphCache.size());
         }
         return pageRank;
     }
@@ -58,11 +56,11 @@ public class PageRankCalculator {
     PageRank doSingleNaiveIteration(PageRank incoming) {
         PageRank outgoing = new PageRank();
 
-        for (Integer pageID : graph.getPageIDs()) {
-            double additionalRank = incoming.getRank(pageID) / graph.getOutboundLinks(pageID)
+        for (Integer pageID : prunedGraphCache.getPageIDs()) {
+            double additionalRank = incoming.getRank(pageID) / prunedGraphCache.getOutboundLinks(pageID)
                 .size();
 
-            for (Integer outgoingPageID : graph.getOutboundLinks(pageID)) {
+            for (Integer outgoingPageID : prunedGraphCache.getOutboundLinks(pageID)) {
                 outgoing.setRank(outgoingPageID, outgoing.getRankWithDefault(outgoingPageID, 0.0) + additionalRank);
             }
         }

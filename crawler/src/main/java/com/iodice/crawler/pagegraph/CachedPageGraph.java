@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.SneakyThrows;
+import sun.jvm.hotspot.debugger.Page;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +63,12 @@ public class CachedPageGraph implements PageGraph {
     }
 
     @Override
-    public void addReverseDanglingPageLinks() {
-        graph.addReverseDanglingPageLinks();
+    public PageGraph collectAndRemoveDanglingPages(int iterationCount) {
+        throw new UnsupportedOperationException("this cache is read only!");
+    }
+
+    @Override
+    public void merge(PageGraph otherGraph) {
+        throw new UnsupportedOperationException("this cache is read only!");
     }
 }
