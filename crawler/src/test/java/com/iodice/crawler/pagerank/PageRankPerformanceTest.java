@@ -21,6 +21,17 @@ public class PageRankPerformanceTest {
         private String type;
     }
 
+    @Test
+    public void runSuite() {
+        for (TestData test : TESTS) {
+            timeGraphInitialization(test);
+        }
+        System.out.println("");
+        for (TestData test : TESTS) {
+            timePageRank(test);
+        }
+    }
+
     private static void timeGraphInitialization(TestData test) {
         long start = System.currentTimeMillis();
         for (int sourcePage = 0; sourcePage < PAGE_COUNT - OUTBOUND_EDGE_COUNT; sourcePage++) {
@@ -32,17 +43,6 @@ public class PageRankPerformanceTest {
 
         String timeFmt = String.format("%.2f", (end - start) / 1000.0);
         System.out.printf("graph init: %-20s %-20s\n", test.type, timeFmt);
-    }
-
-    @Test
-    public void runSuite() {
-        for (TestData test : TESTS) {
-            timeGraphInitialization(test);
-        }
-        System.out.println("");
-        for (TestData test : TESTS) {
-            timePageRank(test);
-        }
     }
 
     private void timePageRank(TestData test) {
