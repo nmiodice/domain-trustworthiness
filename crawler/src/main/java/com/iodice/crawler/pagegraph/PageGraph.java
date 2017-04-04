@@ -10,11 +10,13 @@ public interface PageGraph {
 
     int size();
 
+    int size(int pageID);
+
     Set<Integer> getPageIDs();
 
     Set<Integer> getOutboundLinks(Integer pageID);
 
     PageGraph collectAndRemoveDanglingPages(int iterationCount);
 
-    void merge(PageGraph otherGraph);
+    Set<Integer> merge(PageGraph otherGraph);
 }

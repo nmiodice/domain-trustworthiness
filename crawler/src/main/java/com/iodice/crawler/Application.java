@@ -36,11 +36,9 @@ public class Application {
 
         controller.stop();
 
-        PageRankCalculator pageRankCalculator = new PageRankCalculator(graph);
-
         PageRankStoreAdaptor store = new PageRankStoreAdaptor();
         store.deleteAll();
-        store.store(pageRankCalculator.calculatePageRank(30), graph);
+        store.store(PageRankCalculator.computeMany(graph, 30), graph);
     }
 
     public static void main(String[] args) {

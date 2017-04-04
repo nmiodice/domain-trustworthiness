@@ -9,17 +9,29 @@ import java.util.Set;
 @ToString
 public class PageRank {
 
-    private Map<Integer, Double> map = new HashMap<>();
+    private Map<Integer, Double> map;
+
+    PageRank() {
+        this(new HashMap<>());
+    }
+
+    private PageRank(Map<Integer, Double> map) {
+        this.map = new HashMap<>(map);
+    }
 
     void setRank(Integer pageID, Double pageRank) {
         map.put(pageID, pageRank);
     }
 
-    public Double getRank(Integer pageID) {
-        return getRankWithDefault(pageID, 0.0);
+    void addRank(Integer pageID, Double pageRank) {
+        setRank(pageID, getRankWithDefault(pageID, 0.0) + pageRank);
     }
 
-    Double getRankWithDefault(Integer pageID, Double defaultValue) {
+    public Double getRank(Integer pageID) {
+        return map.get(pageID);
+    }
+
+    private Double getRankWithDefault(Integer pageID, Double defaultValue) {
         return map.getOrDefault(pageID, defaultValue);
     }
 
@@ -31,7 +43,15 @@ public class PageRank {
         return new HashMap<>(map);
     }
 
-    public int size() {
-        return map.size();
+    /**
+     * @param pageIDs a set of pages that should be now considered for page rank calculation, intialized with a default
+     *                rank of 0
+     */
+    void foldInPageIDs(Set<Integer> pageIDs) {
+        for (Integer pageID : pageIDs) {
+            if (!map.containsKey(pageID)) {
+                setRank(pageID, 0.0);
+            }
+        }
     }
 }

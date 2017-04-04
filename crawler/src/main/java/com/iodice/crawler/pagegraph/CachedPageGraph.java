@@ -4,7 +4,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.SneakyThrows;
-import sun.jvm.hotspot.debugger.Page;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +19,7 @@ public class CachedPageGraph implements PageGraph {
     private int graphSize;
     private Set<Integer> pageIDs;
     private LoadingCache<Integer, Set<Integer>> graphCache;
+    private LoadingCache<Integer, Integer> graphNodeSizeCache;
 
     CachedPageGraph(PageGraph graph) {
         this.graph = graph;
@@ -32,6 +32,15 @@ public class CachedPageGraph implements PageGraph {
             .build(new CacheLoader<Integer, Set<Integer>>() {
                 public Set<Integer> load(Integer pageID) {
                     return graph.getOutboundLinks(pageID);
+                }
+            });
+
+        graphNodeSizeCache = CacheBuilder.newBuilder()
+            .maximumSize(10000)
+            .expireAfterWrite(3, TimeUnit.MINUTES)
+            .build(new CacheLoader<Integer, Integer>() {
+                public Integer load(Integer pageID) {
+                    return getOutboundLinks(pageID).size();
                 }
             });
     }
@@ -52,6 +61,12 @@ public class CachedPageGraph implements PageGraph {
     }
 
     @Override
+    @SneakyThrows
+    public int size(int pageID) {
+        return graphNodeSizeCache.get(pageID);
+    }
+
+    @Override
     public Set<Integer> getPageIDs() {
         return pageIDs;
     }
@@ -68,7 +83,7 @@ public class CachedPageGraph implements PageGraph {
     }
 
     @Override
-    public void merge(PageGraph otherGraph) {
+    public Set<Integer> merge(PageGraph otherGraph) {
         throw new UnsupportedOperationException("this cache is read only!");
     }
 }

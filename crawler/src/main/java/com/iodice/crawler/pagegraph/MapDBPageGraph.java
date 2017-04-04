@@ -1,6 +1,5 @@
 package com.iodice.crawler.pagegraph;
 
-import com.google.common.io.Files;
 import org.apache.commons.lang.Validate;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
@@ -15,15 +14,18 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MapDBPageGraph implements PageGraph {
-    private static final DB memoryDB = DBMaker.memoryDB().make();
-    private static final DB fileDB = DBMaker.tempFileDB().make();
+    private static final DB memoryDB = DBMaker.memoryDB()
+        .make();
+    private static final DB fileDB = DBMaker.tempFileDB()
+        .make();
 
     private NavigableSet<Object[]> graph;
     private PageGraphUtil pageGraphUtil = new PageGraphUtil();
 
     MapDBPageGraph(DBType type) {
         DB db = DBType.MEMORY.equals(type) ? memoryDB : fileDB;
-        graph = db.treeSetCreate(UUID.randomUUID().toString())
+        graph = db.treeSetCreate(UUID.randomUUID()
+            .toString())
             .serializer(BTreeKeySerializer.ARRAY2)
             .make();
     }
@@ -46,6 +48,11 @@ public class MapDBPageGraph implements PageGraph {
     @Override
     public int size() {
         return getPageIDs().size();
+    }
+
+    @Override
+    public int size(int pageID) {
+        return getOutboundLinks(pageID).size();
     }
 
     @Override
@@ -85,20 +92,18 @@ public class MapDBPageGraph implements PageGraph {
         // is typical that there are now more dangling links that exist. so we must do this for a number of
         // iterations. It is possible that after all iterations, there still exist dangling links
         for (int i = 0; i < iterationCount; i++) {
-            Set<Integer[]> danglingEntries = getDanglingPages()
-                .parallelStream()
+            Set<Integer[]> danglingEntries = getDanglingPages().parallelStream()
                 .map(this::getPointersToPage)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toCollection(HashSet::new));
 
             for (Integer[] entry : danglingEntries) {
-                // add to the dangling graph
-                allDanglers.add(entry[0], entry[1]);
+                // add to the dangling graph as a domain, so they get proper domain <-> pageID mappings
+                allDanglers.add(domainFromPageID(entry[0]), domainFromPageID(entry[1]));
                 // remove from this graph
                 graph.remove(entry);
             }
         }
-
         return allDanglers;
     }
 
@@ -110,31 +115,46 @@ public class MapDBPageGraph implements PageGraph {
 
     private Set<Integer[]> getPointersToPage(Integer pageID) {
         return getPageIDs().parallelStream()
-            .filter(aPage -> this.getOutboundLinks(aPage).contains(pageID))
+            .filter(aPage -> this.getOutboundLinks(aPage)
+                .contains(pageID))
             .map(aPage -> new Integer[] { aPage, pageID })
             .collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
-    public void merge(PageGraph otherGraph) {
+    public Set<Integer> merge(PageGraph otherGraph) {
+        Set<Integer> preMergeIDs = getPageIDs();
         for (Integer pageID : otherGraph.getPageIDs()) {
             Set<String[]> toAdd = otherGraph.getOutboundLinks(pageID)
                 .stream()
-                .map(outboundID -> new String[] {
-                    otherGraph.domainFromPageID(pageID),
-                    otherGraph.domainFromPageID(outboundID)
-                })
+                .map(outboundID -> new String[] { otherGraph.domainFromPageID(pageID),
+                    otherGraph.domainFromPageID(outboundID) })
                 .collect(Collectors.toCollection(HashSet::new));
 
             for (String[] entry : toAdd) {
                 add(entry[0], entry[1]);
             }
         }
+
+        Set<Integer> postMergeIDs = getPageIDs();
+        postMergeIDs.removeAll(preMergeIDs);
+        return postMergeIDs;
     }
 
     @Override
     public String toString() {
-        return graph.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getClass()
+            .getSimpleName())
+            .append("(graph={");
+        for (Integer src : getPageIDs()) {
+            for (Integer dst : getOutboundLinks(src)) {
+                sb.append(String.format("[%d->%d], ", src, dst));
+            }
+        }
+        return sb.toString()
+            .trim()
+            .substring(0, sb.length() - 2) + "})";
     }
 
     public enum DBType {
