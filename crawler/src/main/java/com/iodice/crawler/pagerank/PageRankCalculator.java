@@ -43,6 +43,10 @@ public class PageRankCalculator {
     }
 
     private static PageRank computeOnce(PageRank incoming, PageGraph graph) {
+        return randomSurfer(basicPageRank(incoming, graph), graph);
+    }
+
+    private static PageRank basicPageRank(PageRank incoming, PageGraph graph) {
         PageRank outgoing = new PageRank();
         for (Integer pageID : graph.getPageIDs()) {
             if (graph.size(pageID) > 0) {
@@ -61,6 +65,18 @@ public class PageRankCalculator {
         return outgoing;
     }
 
+    private static PageRank randomSurfer(PageRank incoming, PageGraph graph) {
+        PageRank outgoing = new PageRank();
+        double basePageRankAddition = (1.0 - DAMPING_FACTOR) / graph.size();
+
+        for (Integer pageID : incoming.getPageIDs()) {
+            double dampenedValue = basePageRankAddition + DAMPING_FACTOR * incoming.getRank(pageID);
+            outgoing.setRank(pageID, dampenedValue);
+        }
+
+        return outgoing;
+    }
+
     static PageRank initialRank(PageGraph graph) {
         PageRank pageRank = new PageRank();
         for (Integer pageID : graph.getPageIDs()) {
@@ -68,17 +84,4 @@ public class PageRankCalculator {
         }
         return pageRank;
     }
-    //
-    //    PageRank applyDamping(PageRank incoming) {
-    //        PageRank outgoing = new PageRank();
-    //        double basePageRankAddition = (1.0 - DAMPING_FACTOR) / incoming.size();
-    //
-    //        for (Integer pageID : incoming.getPageIDs()) {
-    //            double dampenedValue = basePageRankAddition + DAMPING_FACTOR * incoming.getRank(pageID);
-    //            outgoing.setRank(pageID, dampenedValue);
-    //        }
-    //
-    //        return outgoing;
-    //    }
-    //
 }
