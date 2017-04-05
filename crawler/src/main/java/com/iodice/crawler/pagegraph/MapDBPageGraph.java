@@ -31,8 +31,13 @@ public class MapDBPageGraph implements PageGraph {
     }
 
     @Override
-    public String domainFromPageID(Integer id) {
+    public String toDomain(Integer id) {
         return pageGraphUtil.domain(id);
+    }
+
+    @Override
+    public Integer toPageID(String domain) {
+        return pageGraphUtil.toPageID(domain);
     }
 
     @Override
@@ -78,13 +83,20 @@ public class MapDBPageGraph implements PageGraph {
 
     }
 
+    @Override
+    public Set<String> getOutboundLinks(String domain) {
+        return getOutboundLinks(toPageID(domain)).stream()
+            .map(this::toDomain)
+            .collect(Collectors.toCollection(HashSet::new));
+    }
+
     @SuppressWarnings("unchecked")
     private Integer toInt(Object o) {
         return (Integer) o;
     }
 
     @Override
-    public PageGraph collectAndRemoveDanglingPages(int iterationCount) {
+    public PageGraph pruneDanglingPages(int iterationCount) {
         Validate.isTrue(iterationCount > 0);
         MapDBPageGraph allDanglers = new MapDBPageGraph(DBType.FILE);
 
@@ -99,7 +111,7 @@ public class MapDBPageGraph implements PageGraph {
 
             for (Integer[] entry : danglingEntries) {
                 // add to the dangling graph as a domain, so they get proper domain <-> pageID mappings
-                allDanglers.add(domainFromPageID(entry[0]), domainFromPageID(entry[1]));
+                allDanglers.add(toDomain(entry[0]), toDomain(entry[1]));
                 // remove from this graph
                 graph.remove(entry);
             }
@@ -127,8 +139,7 @@ public class MapDBPageGraph implements PageGraph {
         for (Integer pageID : otherGraph.getPageIDs()) {
             Set<String[]> toAdd = otherGraph.getOutboundLinks(pageID)
                 .stream()
-                .map(outboundID -> new String[] { otherGraph.domainFromPageID(pageID),
-                    otherGraph.domainFromPageID(outboundID) })
+                .map(outboundID -> new String[] { otherGraph.toDomain(pageID), otherGraph.toDomain(outboundID) })
                 .collect(Collectors.toCollection(HashSet::new));
 
             for (String[] entry : toAdd) {

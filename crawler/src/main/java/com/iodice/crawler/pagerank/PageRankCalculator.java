@@ -25,7 +25,7 @@ public class PageRankCalculator {
         Validate.isTrue(iterationCount > 0);
 
         PageGraph danglingCache = PageGraphFactory.cachedReadOnlyPageGraph(
-            graph.collectAndRemoveDanglingPages(DANGLING_REMOVE_ITERATION_COUNT));
+            graph.pruneDanglingPages(DANGLING_REMOVE_ITERATION_COUNT));
         PageGraph prunedCache = PageGraphFactory.cachedReadOnlyPageGraph(graph);
 
         PageRank prunedRank = computeMany(initialRank(prunedCache), prunedCache, iterationCount);

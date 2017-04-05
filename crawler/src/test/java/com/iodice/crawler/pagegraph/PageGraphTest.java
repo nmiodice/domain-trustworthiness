@@ -1,18 +1,11 @@
 package com.iodice.crawler.pagegraph;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PageGraphTest {
-    private static final int PAGE_COUNT = 100000;
-    private static final int OUT_DEGREE = 50;
-
-    private double msToS(long s, long e) {
-        return (e - s) / 1000.0;
-    }
 
     @Test
     public void collectAndRemoveDanglingPages_shouldRemoveLevelOneDanglerInOneIteration() {
@@ -20,15 +13,15 @@ public class PageGraphTest {
         pg.add("www.0.com", "www.1.com");
         pg.add("www.1.com", "www.2.com");
 
-        PageGraph danglers = pg.collectAndRemoveDanglingPages(1);
+        PageGraph danglers = pg.pruneDanglingPages(1);
 
         assertEquals(2, pg.size());
-        assertTrue("page graph contains wrong links", pg.getOutboundLinks(0)
-            .contains(1));
+        assertTrue("page graph contains wrong links", pg.getOutboundLinks("www.0.com")
+            .contains("www.1.com"));
 
         assertEquals(2, danglers.size());
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(1)
-            .contains(2));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.1.com")
+            .contains("www.2.com"));
     }
 
     @Test
@@ -43,25 +36,25 @@ public class PageGraphTest {
         pg.add("www.1.com", "www.6.com");
         pg.add("www.2.com", "www.7.com");
 
-        PageGraph danglers = pg.collectAndRemoveDanglingPages(3);
+        PageGraph danglers = pg.pruneDanglingPages(3);
 
         assertEquals(2, pg.size());
         assertTrue("page graph contains wrong links", pg.getOutboundLinks(0)
             .contains(1));
 
         assertEquals(8, danglers.size());
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(0)
-            .contains(5));
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(1)
-            .contains(2));
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(1)
-            .contains(6));
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(2)
-            .contains(3));
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(2)
-            .contains(7));
-        assertTrue("page graph contains wrong links", danglers.getOutboundLinks(3)
-            .contains(4));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.0.com")
+            .contains("www.5.com"));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.1.com")
+            .contains("www.2.com"));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.1.com")
+            .contains("www.6.com"));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.2.com")
+            .contains("www.3.com"));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.2.com")
+            .contains("www.7.com"));
+        assertTrue("page graph contains wrong links", danglers.getOutboundLinks("www.3.com")
+            .contains("www.4.com"));
     }
 
     @Test
@@ -84,36 +77,5 @@ public class PageGraphTest {
             .contains(4));
         assertTrue("merged results are missing values", primary.getOutboundLinks(5)
             .contains(6));
-    }
-
-    @Ignore("ignore")
-    public void stressTest() throws Exception {
-        PageGraph pg = PageGraphFactory.fileDBBackedPageGraph();
-        long start, end;
-
-        // adding elements to graph
-        start = System.currentTimeMillis();
-        for (int srcPage = 0; srcPage < PAGE_COUNT; srcPage++) {
-            for (int destPage = srcPage - 1; destPage >= srcPage - OUT_DEGREE; destPage--) {
-                pg.add(String.valueOf(srcPage), String.valueOf(destPage));
-            }
-        }
-        end = System.currentTimeMillis();
-        System.out.println("add: " + msToS(start, end));
-
-        // prepping graph for page rank calculation
-        //        start = System.currentTimeMillis();
-        //        PageRankCalculator calc = new PageRankCalculator(pg);
-        //        calc.calculatePageRank(30);
-        //        end = System.currentTimeMillis();
-        //        System.out.println("calculatePageRank: " + msToS(start, end));
-
-        //        start = System.currentTimeMillis();
-        //        PageRankCalculator calc = new PageRankCalculator(PageGraphFactory.cachedReadOnlyPageGraph(pg));
-        //        calc.calculatePageRank(30);
-        //        end = System.currentTimeMillis();
-        //        System.out.println("cached calculatePageRank: " + msToS(start, end));
-
-        Thread.sleep(30 * 1000);
     }
 }

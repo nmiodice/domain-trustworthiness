@@ -46,8 +46,13 @@ public class CachedPageGraph implements PageGraph {
     }
 
     @Override
-    public String domainFromPageID(Integer id) {
-        return graph.domainFromPageID(id);
+    public String toDomain(Integer id) {
+        return graph.toDomain(id);
+    }
+
+    @Override
+    public Integer toPageID(String domain) {
+        return graph.toPageID(domain);
     }
 
     @Override
@@ -78,7 +83,12 @@ public class CachedPageGraph implements PageGraph {
     }
 
     @Override
-    public PageGraph collectAndRemoveDanglingPages(int iterationCount) {
+    public Set<String> getOutboundLinks(String domain) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    @Override
+    public PageGraph pruneDanglingPages(int iterationCount) {
         throw new UnsupportedOperationException("this cache is read only!");
     }
 

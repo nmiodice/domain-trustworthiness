@@ -13,7 +13,7 @@ public class PageRankStoreAdaptor {
     public void store(PageRank pageRank, PageGraph pageGraph) {
         Map<String, Double> domainRanks = new HashMap<>();
         for (Integer pageID : pageRank.getPageIDs()) {
-            domainRanks.put(pageGraph.domainFromPageID(pageID), pageRank.getRank(pageID));
+            domainRanks.put(pageGraph.toDomain(pageID), pageRank.getRank(pageID));
         }
         store.store(domainRanks);
     }

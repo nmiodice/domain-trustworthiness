@@ -38,7 +38,7 @@ public class PageRankCalculatorTest {
     }
 
     private static void initLargeGraph() {
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 1000; i++) {
             for (int j = i - 5; j < i; j++) {
                 largeGraph.add(String.format("www.%d.com", i), String.format("www.%d.com", j));
             }

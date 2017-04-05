@@ -17,9 +17,8 @@ public class Application {
 
     private static void runCrawler(int minutes) throws InterruptedException, CrawlerException {
         CrawlerController controller = new CrawlerController(Config.getStringList("crawler.seeds"));
-        PageGraph graph = controller.getPageGraph();
-
         controller.start();
+        PageGraph graph = controller.getPageGraph();
 
         long sleepTimeMS = minutes * 60 * 1000;
         long startTimeMS = System.currentTimeMillis();
@@ -44,12 +43,13 @@ public class Application {
     public static void main(String[] args) {
         Config.init("config.db", "config.crawler");
 
-        EventQueueListener listener = new EventQueueListener();
         try {
             if (args.length > 0) {
                 runCrawler(Integer.parseInt(args[0]));
             } else {
                 while (true) {
+                    EventQueueListener listener = new EventQueueListener();
+
                     logger.info("waiting for next job");
                     PageRankJobParams jobParams = listener.getNextJobParameters();
                     logger.info("starting job: " + jobParams);

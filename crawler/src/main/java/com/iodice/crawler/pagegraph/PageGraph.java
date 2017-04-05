@@ -4,7 +4,9 @@ import java.util.Set;
 
 public interface PageGraph {
 
-    String domainFromPageID(Integer id);
+    String toDomain(Integer id);
+
+    Integer toPageID(String domain);
 
     void add(String sourceDomain, String destinationDomain);
 
@@ -16,7 +18,9 @@ public interface PageGraph {
 
     Set<Integer> getOutboundLinks(Integer pageID);
 
-    PageGraph collectAndRemoveDanglingPages(int iterationCount);
+    Set<String> getOutboundLinks(String domain);
+
+    PageGraph pruneDanglingPages(int iterationCount);
 
     Set<Integer> merge(PageGraph otherGraph);
 }

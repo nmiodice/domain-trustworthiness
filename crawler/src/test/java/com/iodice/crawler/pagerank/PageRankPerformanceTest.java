@@ -4,7 +4,6 @@ import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
 import lombok.AllArgsConstructor;
 import org.junit.Ignore;
-import org.junit.Test;
 
 public class PageRankPerformanceTest {
     private static final Integer[] STRESS_TEST_ITERATION_VALUES = new Integer[] { 1, 2, 4, 6, 8, 12 };
@@ -14,23 +13,6 @@ public class PageRankPerformanceTest {
     private static final TestData[] TESTS = new TestData[] {
         new TestData(PageGraphFactory.memoryDBBackedPageGraph(), "in-memory-graph"),
         new TestData(PageGraphFactory.fileDBBackedPageGraph(), "on-disk-graph") };
-
-    @AllArgsConstructor
-    private static class TestData {
-        private PageGraph graph;
-        private String type;
-    }
-
-    @Test
-    public void runSuite() {
-        for (TestData test : TESTS) {
-            timeGraphInitialization(test);
-        }
-        System.out.println("");
-        for (TestData test : TESTS) {
-            timePageRank(test);
-        }
-    }
 
     private static void timeGraphInitialization(TestData test) {
         long start = System.currentTimeMillis();
@@ -43,6 +25,17 @@ public class PageRankPerformanceTest {
 
         String timeFmt = String.format("%.2f", (end - start) / 1000.0);
         System.out.printf("graph init: %-20s %-20s\n", test.type, timeFmt);
+    }
+
+    @Ignore
+    public void runSuite() {
+        for (TestData test : TESTS) {
+            timeGraphInitialization(test);
+        }
+        System.out.println("");
+        for (TestData test : TESTS) {
+            timePageRank(test);
+        }
     }
 
     private void timePageRank(TestData test) {
@@ -58,5 +51,11 @@ public class PageRankPerformanceTest {
 
         String timeFmt = String.format("%.2f", (end - start) / 1000.0);
         System.out.printf("page rank: %-20s %-5d %-20s\n", test.type, iterationCount, timeFmt);
+    }
+
+    @AllArgsConstructor
+    private static class TestData {
+        private PageGraph graph;
+        private String type;
     }
 }
