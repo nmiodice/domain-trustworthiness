@@ -1,4 +1,3 @@
-
 // helper to convert a score value to an icon
 function scoreToIconPath(score) {
     return "icons/" + score + ".png";
@@ -15,8 +14,8 @@ function changeIcon(iconPath, tabID) {
 
     console.log("changing tab " + tabID + " to icon " + iconPath);
     chrome.browserAction.setIcon({
-        path : iconPath,
-        tabId : tabID
+        path: iconPath,
+        tabId: tabID
     });
 }
 
@@ -36,11 +35,11 @@ var tabIconPathStore = {};
 
 // when notified to update the icon for a tab, do it
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    console.log("onMessage called", request, sender);
-    changeIconToMatchScore(request.domainScore, sender.tab.id);
-    sendResponse("icon changed to " + scoreToIconPath(request.domainScore));
-});
+    function(request, sender, sendResponse) {
+        console.log("onMessage called", request, sender);
+        changeIconToMatchScore(request.domainScore, sender.tab.id);
+        sendResponse("icon changed to " + scoreToIconPath(request.domainScore));
+    });
 
 // reset the icon when a new URL is loaded
 chrome.tabs.onUpdated.addListener(function(tabID, changeInfo) {

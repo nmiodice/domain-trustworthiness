@@ -1,8 +1,7 @@
-
 function changeIcon(domainScore) {
     console.log('triggering change icon')
     chrome.runtime.sendMessage({
-        domainScore : domainScore
+        domainScore: domainScore
     }, function(x) {
         console.log("response was: " + x)
     });
@@ -43,6 +42,3 @@ function requestScoreAndChangeIcon() {
 }
 
 requestScoreAndChangeIcon();
-
-
-
