@@ -14,20 +14,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MapDBPageGraph implements PageGraph {
-    private static final DB memoryDB = DBMaker.memoryDB()
-        .make();
-    private static final DB fileDB = DBMaker.tempFileDB()
-        .make();
-
+    private final DB db;
     private NavigableSet<Object[]> graph;
-    private PageGraphUtil pageGraphUtil = new PageGraphUtil();
+    private PageGraphUtil pageGraphUtil;
 
     MapDBPageGraph(DBType type) {
-        DB db = DBType.MEMORY.equals(type) ? memoryDB : fileDB;
+        db = DBType.MEMORY.equals(type) ? DBMaker.memoryDB().make() : DBMaker.tempFileDB().make();
         graph = db.treeSetCreate(UUID.randomUUID()
             .toString())
             .serializer(BTreeKeySerializer.ARRAY2)
             .make();
+        pageGraphUtil = new PageGraphUtil(db);
     }
 
     @Override
