@@ -6,8 +6,6 @@ public interface PageGraph {
 
     String toDomain(Integer id);
 
-    Integer toPageID(String domain);
-
     void add(String sourceDomain, String destinationDomain);
 
     int size();
@@ -23,4 +21,6 @@ public interface PageGraph {
     PageGraph pruneDanglingPages(int iterationCount);
 
     Set<Integer> merge(PageGraph otherGraph);
+
+    void close();
 }

@@ -13,8 +13,8 @@ import java.util.List;
 public class EventQueueListener {
     private static final Logger logger = LoggerFactory.getLogger(EventQueueListener.class);
 
-    private AmazonSQS sqsClient;
-    private String queueURL;
+    private final AmazonSQS sqsClient;
+    private final String queueURL;
 
     public EventQueueListener() {
         sqsClient = new AmazonSQSClient(new ProfileCredentialsProvider().getCredentials());

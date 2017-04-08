@@ -15,13 +15,12 @@ import java.util.stream.Collectors;
 
 public class MapDBPageGraph implements PageGraph {
     private final DB db;
-    private NavigableSet<Object[]> graph;
-    private PageGraphUtil pageGraphUtil;
+    private final NavigableSet<Object[]> graph;
+    private final PageGraphUtil pageGraphUtil;
 
     MapDBPageGraph(DBType type) {
         db = DBType.MEMORY.equals(type) ? DBMaker.memoryDB().make() : DBMaker.tempFileDB().make();
-        graph = db.treeSetCreate(UUID.randomUUID()
-            .toString())
+        graph = db.treeSetCreate(UUID.randomUUID().toString())
             .serializer(BTreeKeySerializer.ARRAY2)
             .make();
         pageGraphUtil = new PageGraphUtil(db);
@@ -32,7 +31,6 @@ public class MapDBPageGraph implements PageGraph {
         return pageGraphUtil.domain(id);
     }
 
-    @Override
     public Integer toPageID(String domain) {
         return pageGraphUtil.toPageID(domain);
     }
@@ -147,6 +145,12 @@ public class MapDBPageGraph implements PageGraph {
         Set<Integer> postMergeIDs = getPageIDs();
         postMergeIDs.removeAll(preMergeIDs);
         return postMergeIDs;
+    }
+
+    @Override
+    public void close() {
+        db.commit();
+        db.close();
     }
 
     @Override

@@ -1,4 +1,4 @@
-CRAWLER_HOST="ec2-52-91-205-13.compute-1.amazonaws.com"
+CRAWLER_HOST="ec2-54-144-67-158.compute-1.amazonaws.com"
 WEB_SERVER_HOST="ec2-184-72-122-100.compute-1.amazonaws.com"
 
 DB_HOST="ec2-54-175-102-232.compute-1.amazonaws.com"

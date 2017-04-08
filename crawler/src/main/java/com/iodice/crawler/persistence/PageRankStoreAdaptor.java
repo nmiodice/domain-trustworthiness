@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PageRankStoreAdaptor {
-    private PageRankStore store = new PageRankStore();
+    private final PageRankStore store = new PageRankStore();
 
     public void store(PageRank pageRank, PageGraph pageGraph) {
         Map<String, Double> domainRanks = new HashMap<>();

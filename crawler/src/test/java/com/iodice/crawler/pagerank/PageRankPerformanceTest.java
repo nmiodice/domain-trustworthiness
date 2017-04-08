@@ -3,16 +3,25 @@ package com.iodice.crawler.pagerank;
 import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
 import lombok.AllArgsConstructor;
+import org.junit.AfterClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 public class PageRankPerformanceTest {
     private static final Integer[] STRESS_TEST_ITERATION_VALUES = new Integer[] { 1, 2, 4, 6, 8, 12 };
-    private static final Integer PAGE_COUNT = 10000;
+    private static final Integer PAGE_COUNT = 1000;
     private static final Integer OUTBOUND_EDGE_COUNT = 50;
 
     private static final TestData[] TESTS = new TestData[] {
-        new TestData(PageGraphFactory.memoryDBBackedPageGraph(), "in-memory-graph"),
+//        new TestData(PageGraphFactory.memoryDBBackedPageGraph(), "in-memory-graph") };
         new TestData(PageGraphFactory.fileDBBackedPageGraph(), "on-disk-graph") };
+//
+    @AfterClass
+    public static void teardown() {
+        for (TestData test : TESTS) {
+            test.graph.close();
+        }
+    }
 
     private static void timeGraphInitialization(TestData test) {
         long start = System.currentTimeMillis();
@@ -27,7 +36,8 @@ public class PageRankPerformanceTest {
         System.out.printf("graph init: %-20s %-20s\n", test.type, timeFmt);
     }
 
-    @Ignore
+//    @Ignore
+    @Test
     public void runSuite() {
         for (TestData test : TESTS) {
             timeGraphInitialization(test);

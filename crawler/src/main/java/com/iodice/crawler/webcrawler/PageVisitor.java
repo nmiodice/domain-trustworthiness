@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class PageVisitor extends WebCrawler {
     private static final Logger logger = LoggerFactory.getLogger(PageVisitor.class);
-    private static Pattern FILTERS = Pattern.compile(
+    private static final Pattern FILTERS = Pattern.compile(
         ".*(\\.(css|js|bmp|gif|jpe?g|JPE?G|png|tiff?|ico|nef|raw|mid|mp2|mp3|mp4|wav|wma|flv|mpe?g"
             + "|avi|mov|mpeg|ram|m4v|wmv|rm|smil|pdf|doc|docx|pub|xls|xlsx|vsd|ppt|pptx|swf"
             + "|zip|rar|gz|bz2|7z|bin|xml|txt|java|c|cpp|exe))$");
 
-    private PageGraph pageGraph;
+    private final PageGraph pageGraph;
 
     PageVisitor(PageGraph pageGraph) {
         this.pageGraph = pageGraph;

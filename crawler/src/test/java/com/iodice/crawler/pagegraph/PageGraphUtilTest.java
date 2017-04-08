@@ -9,20 +9,31 @@ import static org.junit.Assert.assertTrue;
 public class PageGraphUtilTest {
     @Test
     public void roundTrip_shouldBeSatisfied() {
-        PageGraphUtil util = new PageGraphUtil(DBMaker.memoryDB().make());
+        DB db = DBMaker.memoryDB().make();
+        PageGraphUtil util = new PageGraphUtil(db);
         for (int i = 0; i < 100; i++) {
             String expected = toDomain(i);
             assertTrue(util.domain(util.toPageID(expected)).equals(expected));
         }
+        cleanup(db);
+    }
+
+    private void cleanup(DB db) {
+        db.commit();
+        db.close();
     }
 
     @Test
     public void measureMemoryUsages() {
         for(int i = 0; i < 5; i++) {
-            measureMemoryUsageForDB(DBMaker.memoryDB().make(), "memory db");
+            DB db = DBMaker.memoryDB().make();
+            measureMemoryUsageForDB(db, "memory db");
+            cleanup(db);
         }
         for(int i = 0; i < 5; i++) {
-            measureMemoryUsageForDB(DBMaker.tempFileDB().make(), "file db");
+            DB db = DBMaker.tempFileDB().make();
+            measureMemoryUsageForDB(db, "file db");
+            cleanup(db);
         }
     }
 
@@ -48,8 +59,6 @@ public class PageGraphUtilTest {
         double memoryAfter = getCurrentMemoryUsage(runtime);
         double diff = (memoryAfter - memoryBefore) / 1000000.0;
 
-        db.commit();
-        db.close();
         System.out.println(String.format("mem used: %s: %f", type, diff));
     }
 

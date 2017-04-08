@@ -1,4 +1,4 @@
-CRAWLER_HOST="ec2-52-91-205-13.compute-1.amazonaws.com"
+CRAWLER_HOST="ec2-54-144-67-158.compute-1.amazonaws.com"
 WEB_SERVER_HOST="ec2-184-72-122-100.compute-1.amazonaws.com"
 
 function runCmd() {
@@ -9,10 +9,10 @@ function runCmdInBackground() {
     ssh -i ~/.ssh/PageRank.pem ec2-user@$1 "nohup $2 &"
 }
 
-# runCmd $CRAWLER_HOST "yes | sudo yum install java-1.8.0"
-# runCmd $CRAWLER_HOST "yes | sudo yum remove java-1.7.0-openjdk"
-# runCmd $CRAWLER_HOST "yes | sudo yum install java-1.8.0-openjdk-devel"
-# runCmdInBackground $CRAWLER_HOST "java -jar crawler-1.0-SNAPSHOT-jar-with-dependencies.jar"
+runCmd $CRAWLER_HOST "yes | sudo yum install java-1.8.0"
+runCmd $CRAWLER_HOST "yes | sudo yum remove java-1.7.0-openjdk"
+runCmd $CRAWLER_HOST "yes | sudo yum install java-1.8.0-openjdk-devel"
+runCmdInBackground $CRAWLER_HOST "java -jar crawler-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
 # runCmd $WEB_SERVER_HOST "yes | sudo yum install java-1.8.0"
 # runCmd $WEB_SERVER_HOST "yes | sudo yum remove java-1.7.0-openjdk"

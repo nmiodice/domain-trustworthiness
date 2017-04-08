@@ -24,16 +24,13 @@ public class PageRank {
     }
 
     void addRank(Integer pageID, Double pageRank) {
-        setRank(pageID, getRankWithDefault(pageID, 0.0) + pageRank);
+        setRank(pageID, getRank(pageID) + pageRank);
     }
 
     public Double getRank(Integer pageID) {
-        return map.get(pageID);
+        return map.getOrDefault(pageID, 0.0);
     }
 
-    private Double getRankWithDefault(Integer pageID, Double defaultValue) {
-        return map.getOrDefault(pageID, defaultValue);
-    }
 
     public Set<Integer> getPageIDs() {
         return map.keySet();

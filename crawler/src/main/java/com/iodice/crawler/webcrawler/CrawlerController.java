@@ -1,5 +1,6 @@
 package com.iodice.crawler.webcrawler;
 
+
 import com.iodice.config.Config;
 import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
@@ -21,7 +22,7 @@ public class CrawlerController {
 
     private List<String> seeds;
     private CrawlController controller;
-    private String storageDirectory = Config.getString("crawler.storage_directory");
+    private final String storageDirectory = Config.getString("crawler.storage_directory");
 
     @Getter
     private PageGraph pageGraph;
@@ -31,16 +32,16 @@ public class CrawlerController {
 
     public CrawlerController(List<String> seeds) {
         this();
-        Validate.notNull(seeds, "cannot initialize webcrawler with null seed list");
-        Validate.isFalse(seeds.isEmpty(), "cannot initialize webcrawler with 0 seeds");
-        Validate.noNullElements(seeds.toArray(), "cannot initialize webcrawler with null seed elements");
+        Validate.notNull(seeds, "cannot initialize crawler with null seed list");
+        Validate.isFalse(seeds.isEmpty(), "cannot initialize crawler with 0 seeds");
+        Validate.noNullElements(seeds.toArray(), "cannot initialize crawler with null seed elements");
         this.seeds = seeds;
     }
 
     public void start() throws CrawlerException {
-        logger.info("starting webcrawler");
+        logger.info("starting crawler");
         if (controller != null) {
-            throw new IllegalStateException("webcrawler already started");
+            throw new IllegalStateException("crawler already started");
         }
 
         try {
@@ -57,10 +58,10 @@ public class CrawlerController {
         try {
             controller = buildCrawlerController();
             controller.startNonBlocking(new PageVisitorFactory(pageGraph), 10);
-            logger.info("webcrawler started");
+            logger.info("crawler started");
         } catch (Exception e) {
-            logger.error("webcrawler could not be started: " + e.getMessage(), e);
-            throw new CrawlerException("error starting webcrawler: " + e.getMessage(), e);
+            logger.error("crawler could not be started: " + e.getMessage(), e);
+            throw new CrawlerException("error starting crawler: " + e.getMessage(), e);
         }
     }
 
@@ -97,9 +98,9 @@ public class CrawlerController {
     }
 
     public void stop() {
-        logger.info("stopping webcrawler");
+        logger.info("stopping crawler");
         controller.shutdown();
         controller.waitUntilFinish();
-        logger.info("webcrawler stopped");
+        logger.info("crawler stopped");
     }
 }

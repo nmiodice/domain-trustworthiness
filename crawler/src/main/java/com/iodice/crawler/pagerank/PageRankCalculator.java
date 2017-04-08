@@ -2,7 +2,13 @@ package com.iodice.crawler.pagerank;
 
 import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
+import lombok.SneakyThrows;
 import org.apache.commons.lang.Validate;
+
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class PageRankCalculator {
 
@@ -48,19 +54,22 @@ public class PageRankCalculator {
 
     private static PageRank basicPageRank(PageRank incoming, PageGraph graph) {
         PageRank outgoing = new PageRank();
-        for (Integer pageID : graph.getPageIDs()) {
-            if (graph.size(pageID) > 0) {
-                double rank = incoming.getRank(pageID) / graph.size(pageID);
-                for (Integer outgoingPageID : graph.getOutboundLinks(pageID)) {
-                    outgoing.addRank(outgoingPageID, rank);
-                }
+        Set<Integer> pageIDs = graph.getPageIDs();
 
-                // need to add the rank here just in case no other page points to this one
-                outgoing.addRank(pageID, 0.0);
-            } else {
+        for (Integer pageID : pageIDs) {
+            int nodeSize = graph.size(pageID);
+            if (nodeSize == 0) {
                 // need to add the rank because it will not otherwise be updated and the page rank would be lost
                 outgoing.addRank(pageID, incoming.getRank(pageID));
             }
+
+            double rank = incoming.getRank(pageID) / (double) nodeSize;
+            for (Integer outgoingPageID : graph.getOutboundLinks(pageID)) {
+                outgoing.addRank(outgoingPageID, rank);
+            }
+
+            // need to add the rank here just in case no other page points to this one
+            outgoing.addRank(pageID, 0.0);
         }
         return outgoing;
     }

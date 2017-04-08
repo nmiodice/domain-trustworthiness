@@ -3,6 +3,7 @@ package com.iodice.crawler.pagerank;
 import com.iodice.config.Config;
 import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -20,6 +21,12 @@ public class PageRankCalculatorTest {
         initSimpleGraph();
         initDanglingGraph();
         initLargeGraph();
+    }
+
+    @AfterClass
+    public static void teardown() {
+        simpleGraph.close();
+        dangingGraph.close();
     }
 
     private static void initSimpleGraph() {

@@ -15,20 +15,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class CachedPageGraph implements PageGraph {
 
-    private PageGraph graph;
-    private int graphSize;
-    private Set<Integer> pageIDs;
-    private LoadingCache<Integer, Set<Integer>> graphCache;
-    private LoadingCache<Integer, Integer> graphNodeSizeCache;
+    private final PageGraph graph;
+    private final int graphSize;
+    private final Set<Integer> pageIDs;
+    private final LoadingCache<Integer, Set<Integer>> graphCache;
+    private final LoadingCache<Integer, Integer> graphNodeSizeCache;
 
     CachedPageGraph(PageGraph graph) {
         this.graph = graph;
-        this.graphSize = graph.size();
         this.pageIDs = graph.getPageIDs();
+        this.graphSize = pageIDs.size();
 
         graphCache = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .expireAfterWrite(3, TimeUnit.MINUTES)
+            .maximumSize(10000)
             .build(new CacheLoader<Integer, Set<Integer>>() {
                 public Set<Integer> load(Integer pageID) {
                     return graph.getOutboundLinks(pageID);
@@ -36,8 +35,7 @@ public class CachedPageGraph implements PageGraph {
             });
 
         graphNodeSizeCache = CacheBuilder.newBuilder()
-            .maximumSize(10000)
-            .expireAfterWrite(3, TimeUnit.MINUTES)
+            .maximumSize(graphSize)
             .build(new CacheLoader<Integer, Integer>() {
                 public Integer load(Integer pageID) {
                     return getOutboundLinks(pageID).size();
@@ -48,11 +46,6 @@ public class CachedPageGraph implements PageGraph {
     @Override
     public String toDomain(Integer id) {
         return graph.toDomain(id);
-    }
-
-    @Override
-    public Integer toPageID(String domain) {
-        return graph.toPageID(domain);
     }
 
     @Override
@@ -95,5 +88,10 @@ public class CachedPageGraph implements PageGraph {
     @Override
     public Set<Integer> merge(PageGraph otherGraph) {
         throw new UnsupportedOperationException("this cache is read only!");
+    }
+
+    @Override
+    public void close() {
+        throw new UnsupportedOperationException("this cache is read only! try closing the graph being cached");
     }
 }
