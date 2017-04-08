@@ -10,14 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class PageGraphUtil {
 
-    private final DB db;
     private final ConcurrentMap<String, Integer> domainToPageID;
     private final Map<Integer, String> pageIDtoDomain;
 
     private final AtomicInteger nextID;
 
     PageGraphUtil(DB db) {
-        this.db = db;
         nextID = new AtomicInteger(0);
         domainToPageID = db.hashMap(UUID.randomUUID()
             .toString(), Serializer.STRING, Serializer.INTEGER);

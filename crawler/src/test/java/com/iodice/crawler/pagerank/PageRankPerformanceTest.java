@@ -4,13 +4,12 @@ import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
 import lombok.AllArgsConstructor;
 import org.junit.AfterClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class PageRankPerformanceTest {
-    private static final Integer[] STRESS_TEST_ITERATION_VALUES = new Integer[] { 1, 2, 4, 6, 8, 12 };
-    private static final Integer PAGE_COUNT = 10000;
-    private static final Integer OUTBOUND_EDGE_COUNT = 50;
+    private static final Integer[] STRESS_TEST_ITERATION_VALUES = new Integer[] { 1, 2, 4, 8, 16 };
+    private static final Integer PAGE_COUNT = 1000;
+    private static final Integer OUTBOUND_EDGE_COUNT = 5;
 
     private static final TestData[] TESTS = new TestData[] {
         new TestData(PageGraphFactory.memoryDBBackedPageGraph(), "in-memory-graph"),
@@ -36,7 +35,7 @@ public class PageRankPerformanceTest {
         System.out.printf("graph init: %-20s %-20s\n", test.type, timeFmt);
     }
 
-    @Ignore
+    @Test
     public void runSuite() {
         for (TestData test : TESTS) {
             timeGraphInitialization(test);
@@ -55,7 +54,7 @@ public class PageRankPerformanceTest {
 
     private void time(TestData test, int iterationCount) {
         long start = System.currentTimeMillis();
-        PageRankCalculatorFactory.getIterativeCalculator()
+        PageRankCalculatorFactory.getMatrixCalculator()
             .computeMany(test.graph, iterationCount);
         long end = System.currentTimeMillis();
 

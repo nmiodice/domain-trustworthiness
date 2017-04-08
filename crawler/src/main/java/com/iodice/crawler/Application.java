@@ -2,7 +2,6 @@ package com.iodice.crawler;
 
 import com.iodice.config.Config;
 import com.iodice.crawler.pagegraph.PageGraph;
-import com.iodice.crawler.pagerank.IterativePageRankCalculator;
 import com.iodice.crawler.pagerank.PageRank;
 import com.iodice.crawler.pagerank.PageRankCalculator;
 import com.iodice.crawler.pagerank.PageRankCalculatorFactory;

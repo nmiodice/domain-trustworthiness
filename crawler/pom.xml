@@ -108,6 +108,15 @@
       <version>2.0-beta13</version>
     </dependency>
 
+
+    <!-- matrix library -->
+    <dependency>
+      <groupId>org.ujmp</groupId>
+      <artifactId>ujmp-complete</artifactId>
+      <version>0.3.0</version>
+    </dependency>
+
+
   </dependencies>
 
 </project>

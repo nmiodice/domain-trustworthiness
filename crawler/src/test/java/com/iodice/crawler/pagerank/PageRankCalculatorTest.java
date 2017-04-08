@@ -12,39 +12,42 @@ import static org.junit.Assert.assertEquals;
 public class PageRankCalculatorTest {
     private static final double EQ_THRESHOLD = 0.0000000000001;
     private static final PageGraph dangingGraph = PageGraphFactory.memoryDBBackedPageGraph();
-    private static final PageGraph simpleGraph = PageGraphFactory.memoryDBBackedPageGraph();
+    private static final PageGraph smallGraph = PageGraphFactory.memoryDBBackedPageGraph();
+    private static final PageGraph simpleFlowGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final PageGraph largeGraph = PageGraphFactory.memoryDBBackedPageGraph();
-    private static final IterativePageRankCalculator calculator = new IterativePageRankCalculator();
+    private static final IterativePageRankCalculator iterativeCalculator = new IterativePageRankCalculator();
+    private static final MatrixPageRankCalculator matrixCalculator = new MatrixPageRankCalculator();
+
     @BeforeClass
     public static void init() throws Exception {
         Config.init("config.crawler");
-        initSimpleGraph();
-        initDanglingGraph();
-        initLargeGraph();
+        initGraphs();
     }
 
     @AfterClass
     public static void teardown() {
-        simpleGraph.close();
+        smallGraph.close();
         dangingGraph.close();
     }
 
-    private static void initSimpleGraph() {
-        simpleGraph.add("www.1.com", "www.0.com");
-        simpleGraph.add("www.2.com", "www.0.com");
-        simpleGraph.add("www.0.com", "www.3.com");
-        simpleGraph.add("www.3.com", "www.1.com");
-        simpleGraph.add("www.3.com", "www.2.com");
-    }
+    private static void initGraphs() {
+        simpleFlowGraph.add("www.0.com", "www.1.com");
+        simpleFlowGraph.add("www.0.com", "www.2.com");
+        simpleFlowGraph.add("www.1.com", "www.3.com");
+        simpleFlowGraph.add("www.2.com", "www.3.com");
+        simpleFlowGraph.add("www.3.com", "www.0.com");
 
-    private static void initDanglingGraph() {
+        smallGraph.add("www.1.com", "www.0.com");
+        smallGraph.add("www.2.com", "www.0.com");
+        smallGraph.add("www.0.com", "www.3.com");
+        smallGraph.add("www.3.com", "www.1.com");
+        smallGraph.add("www.3.com", "www.2.com");
+
         dangingGraph.add("www.0.com", "www.1.com");
         dangingGraph.add("www.1.com", "www.2.com");
         dangingGraph.add("www.2.com", "www.0.com");
         dangingGraph.add("www.2.com", "www.3.com");
-    }
 
-    private static void initLargeGraph() {
         for (int i = 0; i < 1000; i++) {
             for (int j = i - 5; j < i; j++) {
                 largeGraph.add(String.format("www.%d.com", i), String.format("www.%d.com", j));
@@ -53,8 +56,8 @@ public class PageRankCalculatorTest {
     }
 
     @Test
-    public void simpleGraphRanks_shouldSumToOne() {
-        runRankAssertionTest(simpleGraph, "simple");
+    public void smallGraphRanks_shouldSumToOne() {
+        runRankAssertionTest(smallGraph, "simple");
     }
 
     @Test
@@ -67,10 +70,18 @@ public class PageRankCalculatorTest {
         runRankAssertionTest(largeGraph, "large");
     }
 
+    @Test
+    public void simpleFlowGraphRanks_shouldSumToOne() {
+        runRankAssertionTest(simpleFlowGraph, "simple flow");
+    }
+
     private void runRankAssertionTest(PageGraph graph, String name) {
-        assertRankSumsToOne(calculator.initialRank(graph), name + ": initial");
-        assertRankSumsToOne(calculator.computeMany(graph, 1), name + ": 1 iteration");
-        assertRankSumsToOne(calculator.computeMany(graph, 30), name + ": 30 iterations");
+        assertRankSumsToOne(iterativeCalculator.initialRank(graph), name + ": initial");
+        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 1), name + ": 1 iteration");
+        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 30), name + ": 30 iterations");
+
+        assertRankSumsToOne(matrixCalculator.computeMany(graph, 1), name + ": 1 iteration");
+        assertRankSumsToOne(matrixCalculator.computeMany(graph, 30), name + ": 30 iterations");
     }
 
     private void assertRankSumsToOne(PageRank pageRank, String failMessage) {
