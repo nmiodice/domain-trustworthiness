@@ -14,7 +14,7 @@ public class PageRankCalculatorTest {
     private static final PageGraph dangingGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final PageGraph simpleGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final PageGraph largeGraph = PageGraphFactory.memoryDBBackedPageGraph();
-
+    private static final IterativePageRankCalculator calculator = new IterativePageRankCalculator();
     @BeforeClass
     public static void init() throws Exception {
         Config.init("config.crawler");
@@ -68,9 +68,9 @@ public class PageRankCalculatorTest {
     }
 
     private void runRankAssertionTest(PageGraph graph, String name) {
-        assertRankSumsToOne(PageRankCalculator.initialRank(graph), name + ": initial");
-        assertRankSumsToOne(PageRankCalculator.computeMany(graph, 1), name + ": 1 iteration");
-        assertRankSumsToOne(PageRankCalculator.computeMany(graph, 30), name + ": 30 iterations");
+        assertRankSumsToOne(calculator.initialRank(graph), name + ": initial");
+        assertRankSumsToOne(calculator.computeMany(graph, 1), name + ": 1 iteration");
+        assertRankSumsToOne(calculator.computeMany(graph, 30), name + ": 30 iterations");
     }
 
     private void assertRankSumsToOne(PageRank pageRank, String failMessage) {

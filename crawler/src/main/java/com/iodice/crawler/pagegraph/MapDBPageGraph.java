@@ -19,8 +19,11 @@ public class MapDBPageGraph implements PageGraph {
     private final PageGraphUtil pageGraphUtil;
 
     MapDBPageGraph(DBType type) {
-        db = DBType.MEMORY.equals(type) ? DBMaker.memoryDB().make() : DBMaker.tempFileDB().make();
-        graph = db.treeSetCreate(UUID.randomUUID().toString())
+        db = DBType.MEMORY.equals(type) ? DBMaker.memoryDB()
+            .make() : DBMaker.tempFileDB()
+            .make();
+        graph = db.treeSetCreate(UUID.randomUUID()
+            .toString())
             .serializer(BTreeKeySerializer.ARRAY2)
             .make();
         pageGraphUtil = new PageGraphUtil(db);

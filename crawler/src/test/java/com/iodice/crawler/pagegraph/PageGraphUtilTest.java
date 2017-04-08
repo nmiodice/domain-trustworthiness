@@ -9,11 +9,13 @@ import static org.junit.Assert.assertTrue;
 public class PageGraphUtilTest {
     @Test
     public void roundTrip_shouldBeSatisfied() {
-        DB db = DBMaker.memoryDB().make();
+        DB db = DBMaker.memoryDB()
+            .make();
         PageGraphUtil util = new PageGraphUtil(db);
         for (int i = 0; i < 100; i++) {
             String expected = toDomain(i);
-            assertTrue(util.domain(util.toPageID(expected)).equals(expected));
+            assertTrue(util.domain(util.toPageID(expected))
+                .equals(expected));
         }
         cleanup(db);
     }
@@ -25,13 +27,15 @@ public class PageGraphUtilTest {
 
     @Test
     public void measureMemoryUsages() {
-        for(int i = 0; i < 5; i++) {
-            DB db = DBMaker.memoryDB().make();
+        for (int i = 0; i < 5; i++) {
+            DB db = DBMaker.memoryDB()
+                .make();
             measureMemoryUsageForDB(db, "memory db");
             cleanup(db);
         }
-        for(int i = 0; i < 5; i++) {
-            DB db = DBMaker.tempFileDB().make();
+        for (int i = 0; i < 5; i++) {
+            DB db = DBMaker.tempFileDB()
+                .make();
             measureMemoryUsageForDB(db, "file db");
             cleanup(db);
         }
@@ -40,11 +44,11 @@ public class PageGraphUtilTest {
     /**
      * Attempts to measure the memory usage of a {@link PageGraphUtil} under load. The approach used is only an
      * approximation, and it relies on this method:
-     *  1. run GC, measure memory
-     *  2. put {@link PageGraphUtil} under load
-     *  3. run GC, measure memory
+     * 1. run GC, measure memory
+     * 2. put {@link PageGraphUtil} under load
+     * 3. run GC, measure memory
      *
-     * @param db {@link DB} used to initialize the {@link PageGraphUtil}
+     * @param db   {@link DB} used to initialize the {@link PageGraphUtil}
      * @param type used for logging
      */
     private void measureMemoryUsageForDB(DB db, String type) {

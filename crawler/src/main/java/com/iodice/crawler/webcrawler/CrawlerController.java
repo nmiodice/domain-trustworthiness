@@ -1,6 +1,5 @@
 package com.iodice.crawler.webcrawler;
 
-
 import com.iodice.config.Config;
 import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
@@ -19,11 +18,9 @@ import java.util.List;
 
 public class CrawlerController {
     private static final Logger logger = LoggerFactory.getLogger(CrawlerController.class);
-
+    private final String storageDirectory = Config.getString("crawler.storage_directory");
     private List<String> seeds;
     private CrawlController controller;
-    private final String storageDirectory = Config.getString("crawler.storage_directory");
-
     @Getter
     private PageGraph pageGraph;
 

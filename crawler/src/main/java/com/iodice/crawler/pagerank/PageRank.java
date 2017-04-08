@@ -31,7 +31,6 @@ public class PageRank {
         return map.getOrDefault(pageID, 0.0);
     }
 
-
     public Set<Integer> getPageIDs() {
         return map.keySet();
     }

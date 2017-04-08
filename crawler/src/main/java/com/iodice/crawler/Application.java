@@ -2,7 +2,10 @@ package com.iodice.crawler;
 
 import com.iodice.config.Config;
 import com.iodice.crawler.pagegraph.PageGraph;
+import com.iodice.crawler.pagerank.IterativePageRankCalculator;
+import com.iodice.crawler.pagerank.PageRank;
 import com.iodice.crawler.pagerank.PageRankCalculator;
+import com.iodice.crawler.pagerank.PageRankCalculatorFactory;
 import com.iodice.crawler.persistence.PageRankStoreAdaptor;
 import com.iodice.crawler.queue.EventListenerException;
 import com.iodice.crawler.queue.EventQueueListener;
@@ -35,9 +38,12 @@ public class Application {
 
         controller.stop();
 
+        PageRankCalculator calculator = PageRankCalculatorFactory.getIterativeCalculator();
+        PageRank rank = calculator.computeMany(graph, 30);
+
         PageRankStoreAdaptor store = new PageRankStoreAdaptor();
         store.deleteAll();
-        store.store(PageRankCalculator.computeMany(graph, 30), graph);
+        store.store(rank, graph);
     }
 
     public static void main(String[] args) {
