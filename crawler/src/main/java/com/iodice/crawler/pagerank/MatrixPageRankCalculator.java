@@ -16,7 +16,7 @@ public class MatrixPageRankCalculator implements PageRankCalculator {
 
     @Override
     public PageRank computeMany(PageGraph graph, int iterationCount) {
-        PageGraph cached = PageGraphFactory.cachedReadOnlyPageGraph(graph);
+        PageGraph cached = PageGraphFactory.readOnlyCachedGraph(graph);
         Matrix transitionMatrix = getTransitionMatrix(cached);
         Matrix rankVector = getInitialRankMatrix(cached.size());
 
@@ -68,5 +68,9 @@ public class MatrixPageRankCalculator implements PageRankCalculator {
         }
 
         return r;
+    }
+
+    @Override
+    public void cleanup() {
     }
 }

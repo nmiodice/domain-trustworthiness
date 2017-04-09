@@ -7,6 +7,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.File;
+
 import static org.junit.Assert.assertEquals;
 
 public class PageRankCalculatorTest {
@@ -17,6 +19,13 @@ public class PageRankCalculatorTest {
     private static final PageGraph largeGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final IterativePageRankCalculator iterativeCalculator = new IterativePageRankCalculator();
     private static final MatrixPageRankCalculator matrixCalculator = new MatrixPageRankCalculator();
+    private static final FilePageRankCalculator fileCalculator;
+
+    static {
+        File scratchFile = new File("/Users/nickio/personal/domain-trustworthiness/graph");
+        scratchFile.mkdir();
+        fileCalculator = new FilePageRankCalculator(scratchFile.toPath());
+    }
 
     @BeforeClass
     public static void init() throws Exception {
@@ -48,8 +57,8 @@ public class PageRankCalculatorTest {
         dangingGraph.add("www.2.com", "www.0.com");
         dangingGraph.add("www.2.com", "www.3.com");
 
-        for (int i = 0; i < 1000; i++) {
-            for (int j = i - 5; j < i; j++) {
+        for (int i = 0; i < 1; i++) {
+            for (int j = i - 1; j < i; j++) {
                 largeGraph.add(String.format("www.%d.com", i), String.format("www.%d.com", j));
             }
         }
@@ -76,12 +85,15 @@ public class PageRankCalculatorTest {
     }
 
     private void runRankAssertionTest(PageGraph graph, String name) {
-        assertRankSumsToOne(iterativeCalculator.initialRank(graph), name + ": initial");
-        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 1), name + ": 1 iteration");
-        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 30), name + ": 30 iterations");
+//        assertRankSumsToOne(iterativeCalculator.initialRank(graph), name + ": initial");
+//        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 1), name + ": 1 iteration");
+//        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 30), name + ": 30 iterations");
+//
+//        assertRankSumsToOne(matrixCalculator.computeMany(graph, 1), name + ": 1 iteration");
+//        assertRankSumsToOne(matrixCalculator.computeMany(graph, 30), name + ": 30 iterations");
 
-        assertRankSumsToOne(matrixCalculator.computeMany(graph, 1), name + ": 1 iteration");
-        assertRankSumsToOne(matrixCalculator.computeMany(graph, 30), name + ": 30 iterations");
+        assertRankSumsToOne(fileCalculator.computeMany(graph, 1), name + ": 1 iteration");
+        assertRankSumsToOne(fileCalculator.computeMany(graph, 30), name + ": 30 iterations");
     }
 
     private void assertRankSumsToOne(PageRank pageRank, String failMessage) {

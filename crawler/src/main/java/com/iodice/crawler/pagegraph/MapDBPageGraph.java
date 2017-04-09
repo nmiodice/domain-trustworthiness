@@ -17,9 +17,11 @@ public class MapDBPageGraph implements PageGraph {
     private final DB db;
     private final NavigableSet<Object[]> graph;
     private final PageGraphUtil pageGraphUtil;
+    private final DBType dbType;
 
     MapDBPageGraph(DBType type) {
-        db = DBType.MEMORY.equals(type) ? DBMaker.memoryDB()
+        dbType = type;
+        db = DBType.MEMORY.equals(dbType) ? DBMaker.memoryDB()
             .make() : DBMaker.tempFileDB()
             .make();
         graph = db.treeSetCreate(UUID.randomUUID()
@@ -60,11 +62,7 @@ public class MapDBPageGraph implements PageGraph {
 
     @Override
     public Set<Integer> getPageIDs() {
-        Object[] lo = new Object[] { Integer.MIN_VALUE };
-        Object[] hi = new Object[] { Integer.MAX_VALUE };
-
-        return graph.subSet(lo, hi)
-            .stream()
+        return graph.stream()
             .flatMap(Arrays::stream)
             .map(this::toInt)
             .collect(Collectors.toCollection(HashSet::new));
@@ -96,7 +94,7 @@ public class MapDBPageGraph implements PageGraph {
     @Override
     public PageGraph pruneDanglingPages(int iterationCount) {
         Validate.isTrue(iterationCount > 0);
-        MapDBPageGraph allDanglers = new MapDBPageGraph(DBType.FILE);
+        MapDBPageGraph allDanglers = new MapDBPageGraph(dbType);
 
         // the algorithm here is to remove all dangling links during each iteration. by removing dangling links, it
         // is typical that there are now more dangling links that exist. so we must do this for a number of

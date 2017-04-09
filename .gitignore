@@ -4,3 +4,4 @@ com.iodice.crawler.iml
 target
 outputs
 *.iml
+graph/

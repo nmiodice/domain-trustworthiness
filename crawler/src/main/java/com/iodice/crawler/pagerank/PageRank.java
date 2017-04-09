@@ -45,9 +45,13 @@ public class PageRank {
      */
     void foldInPageIDs(Set<Integer> pageIDs) {
         for (Integer pageID : pageIDs) {
-            if (!map.containsKey(pageID)) {
-                setRank(pageID, 0.0);
-            }
+            addRank(pageID, 0.0);
+        }
+    }
+
+    void add(PageRank otherRank) {
+        for (Integer pageID : otherRank.getPageIDs()) {
+            addRank(pageID, otherRank.getRank(pageID));
         }
     }
 }

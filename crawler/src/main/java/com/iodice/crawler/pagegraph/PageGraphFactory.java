@@ -2,7 +2,7 @@ package com.iodice.crawler.pagegraph;
 
 public class PageGraphFactory {
 
-    public static PageGraph cachedReadOnlyPageGraph(PageGraph graph) {
+    public static PageGraph readOnlyCachedGraph(PageGraph graph) {
         return new CachedPageGraph(graph);
     }
 
