@@ -52,18 +52,35 @@ class FilePageRankCalculator extends BasePageRankCalculator {
     @Override
     @SneakyThrows
     void init(PageGraph graph) {
+        long start;
+
+        start = System.currentTimeMillis();
         initFileSystem();
+        printTime(start, System.currentTimeMillis(), "init file system");
+
+        start = System.currentTimeMillis();
         initPartitionRanges(graph);
+        printTime(start, System.currentTimeMillis(), "init partition ranges");
+
+        start = System.currentTimeMillis();
         serializeGraph(graph);
+        printTime(start, System.currentTimeMillis(), "serialize graph");
+    }
+
+    private void printTime (long start, long end, String name) {
+        String timeFmt = String.format("%.2f", (end - start) / 1000.0);
+        System.out.printf("graph init: %-20s %-20s\n", name, timeFmt);
     }
 
     @Override
     @SneakyThrows
     PageRank singPageRankIteration(PageRank oldRank, PageGraph graph) {
+        long start = System.currentTimeMillis();
         PageRank newRank = new PageRank();
         runTasks(IntStream.range(0, partitions.size())
             .mapToObj(partitionID -> new PageRankWorker(oldRank, newRank, partitionID))
             .collect(Collectors.toSet()), 10);
+        printTime(start, System.currentTimeMillis(), "single iteration");
         return newRank;
     }
 
@@ -90,6 +107,12 @@ class FilePageRankCalculator extends BasePageRankCalculator {
         FileUtils.deleteQuietly(base.toFile());
     }
 
+    private File getFile(int pageID) {
+        return base.resolve(GRAPH_FOLDER)
+            .resolve(Integer.toString(pageID))
+            .toFile();
+    }
+
     @AllArgsConstructor
     class PageRankWorker implements Callable<Void> {
         private final PageRank oldRank;
@@ -98,7 +121,6 @@ class FilePageRankCalculator extends BasePageRankCalculator {
 
         @Override
         public Void call() throws Exception {
-            System.out.println(getFile(partitionID).getAbsolutePath());
             try (FileReader fReader = new FileReader(getFile(partitionID));
                 BufferedReader bReader = new BufferedReader(fReader)) {
 
@@ -159,11 +181,5 @@ class FilePageRankCalculator extends BasePageRankCalculator {
             }
             return null;
         }
-    }
-
-    private File getFile(int pageID) {
-        return base.resolve(GRAPH_FOLDER)
-            .resolve(Integer.toString(pageID))
-            .toFile();
     }
 }

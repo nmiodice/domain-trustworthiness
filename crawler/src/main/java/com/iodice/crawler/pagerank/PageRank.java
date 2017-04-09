@@ -40,12 +40,18 @@ public class PageRank {
     }
 
     /**
-     * @param pageIDs a set of pages that should be now considered for page rank calculation, intialized with a default
-     *                rank of 0
+     * @param pageIDs a set of pages that should be now considered for page rank calculation, initialized with a default
+     *                rank of 0 UNLESS the existing graph is empty, in which case the new nodes should be initialized
+     *                with a rank = 1 / (# new pages). This is only an issue for very small graphs
      */
     void foldInPageIDs(Set<Integer> pageIDs) {
+        double toAdd = 0.0;
+        if (getPageIDs().size() == 0) {
+            toAdd = 1.0 / (double) pageIDs.size();
+        }
+
         for (Integer pageID : pageIDs) {
-            addRank(pageID, 0.0);
+            addRank(pageID, toAdd);
         }
     }
 

@@ -4,6 +4,8 @@ import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
 import org.apache.commons.lang.Validate;
 
+import java.util.Set;
+
 abstract class BasePageRankCalculator implements PageRankCalculator {
     private static final double DAMPING_FACTOR = 0.85;
     private static final int DANGLING_REMOVE_ITERATION_COUNT = 10;
@@ -34,13 +36,14 @@ abstract class BasePageRankCalculator implements PageRankCalculator {
     public PageRank computeMany(PageGraph graph, int iterationCount) {
         Validate.isTrue(iterationCount > 0);
 
-        PageGraph danglingCache = PageGraphFactory.readOnlyCachedGraph(
-            graph.pruneDanglingPages(DANGLING_REMOVE_ITERATION_COUNT));
+        PageGraph danglingGraph = graph.pruneDanglingPages(DANGLING_REMOVE_ITERATION_COUNT);
         PageGraph prunedCache = PageGraphFactory.readOnlyCachedGraph(graph);
 
         PageRank prunedRank = initAndComputeMany(initialRank(prunedCache), prunedCache, iterationCount);
-        prunedRank.foldInPageIDs(graph.merge(danglingCache));
+        Set<Integer> newPages = graph.merge(PageGraphFactory.readOnlyCachedGraph(danglingGraph));
+        danglingGraph.close();
 
+        prunedRank.foldInPageIDs(newPages);
         PageGraph fullGraphCache = PageGraphFactory.readOnlyCachedGraph(graph);
         return initAndComputeMany(prunedRank, fullGraphCache, DANGLING_REMOVE_ITERATION_COUNT);
     }
@@ -59,7 +62,7 @@ abstract class BasePageRankCalculator implements PageRankCalculator {
      * @return the newly computed page rank
      */
     private PageRank computeMany(PageRank incomingRank, PageGraph graph, int iterationCount) {
-        if (iterationCount < 0) {
+        if (iterationCount == 0) {
             return incomingRank;
         }
         return computeMany(computeOnce(incomingRank, graph), graph, --iterationCount);

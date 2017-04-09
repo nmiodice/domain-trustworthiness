@@ -7,6 +7,7 @@ import org.mapdb.DBMaker;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -91,6 +92,11 @@ public class MapDBPageGraph implements PageGraph {
         return (Integer) o;
     }
 
+    private void printTime(long start, long end, String name) {
+        String timeFmt = String.format("%.2f", (end - start) / 1000.0);
+        System.out.printf("graph init: %-20s %-20s\n", name, timeFmt);
+    }
+
     @Override
     public PageGraph pruneDanglingPages(int iterationCount) {
         Validate.isTrue(iterationCount > 0);
@@ -100,12 +106,12 @@ public class MapDBPageGraph implements PageGraph {
         // is typical that there are now more dangling links that exist. so we must do this for a number of
         // iterations. It is possible that after all iterations, there still exist dangling links
         for (int i = 0; i < iterationCount; i++) {
-            Set<Integer[]> danglingEntries = getDanglingPages().parallelStream()
-                .map(this::getPointersToPage)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toCollection(HashSet::new));
+            // to avoid finding the page IDs more times than needed, we can keep a cached copy that is only relevant
+            // during this iteration
+            Set<Integer> currentPageIDs = getPageIDs();
+            Set<Integer> danglingPages = getDanglingPages(currentPageIDs);
 
-            for (Integer[] entry : danglingEntries) {
+            for (Integer[] entry : getPointersToPages(currentPageIDs, danglingPages)) {
                 // add to the dangling graph as a domain, so they get proper domain <-> pageID mappings
                 allDanglers.add(toDomain(entry[0]), toDomain(entry[1]));
                 // remove from this graph
@@ -115,18 +121,35 @@ public class MapDBPageGraph implements PageGraph {
         return allDanglers;
     }
 
-    private Set<Integer> getDanglingPages() {
-        return getPageIDs().stream()
+    private Set<Integer> getDanglingPages(Set<Integer> pageIDs) {
+        long start = System.currentTimeMillis();
+        Set<Integer> y = pageIDs.stream()
             .filter(x -> getOutboundLinks(x).isEmpty())
             .collect(Collectors.toCollection(HashSet::new));
+        printTime(start, System.currentTimeMillis(), "getDanglingPages");
+        return y;
     }
 
-    private Set<Integer[]> getPointersToPage(Integer pageID) {
-        return getPageIDs().parallelStream()
-            .filter(aPage -> this.getOutboundLinks(aPage)
-                .contains(pageID))
-            .map(aPage -> new Integer[] { aPage, pageID })
-            .collect(Collectors.toCollection(HashSet::new));
+    private Set<Integer[]> getPointersToPages(Set<Integer> pageIDs, Set<Integer> targetPages) {
+        long start = System.currentTimeMillis();
+        Set<Integer[]> pointers = new HashSet<>();
+        for (Integer pageID : pageIDs) {
+            Set<Integer> edges = getOutboundLinks(pageID);
+            Set<Integer> intersection = intersectionWithCopy(edges, targetPages);
+
+            pointers.addAll(intersection.stream()
+                .map(aPage -> new Integer[] { aPage, pageID })
+                .collect(Collectors.toSet()));
+
+        }
+        printTime(start, System.currentTimeMillis(), "getPointersToPage");
+        return pointers;
+    }
+
+    private <T> Set<T> intersectionWithCopy(Set<T> A, Set<T> B) {
+        HashSet<T> intersection = new HashSet<>(A);
+        intersection.retainAll(B);
+        return intersection;
     }
 
     @Override

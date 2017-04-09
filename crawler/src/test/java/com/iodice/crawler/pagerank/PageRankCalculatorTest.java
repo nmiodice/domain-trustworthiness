@@ -16,7 +16,9 @@ public class PageRankCalculatorTest {
     private static final PageGraph dangingGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final PageGraph smallGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final PageGraph simpleFlowGraph = PageGraphFactory.memoryDBBackedPageGraph();
+    private static final PageGraph minimalGraph = PageGraphFactory.memoryDBBackedPageGraph();
     private static final PageGraph largeGraph = PageGraphFactory.memoryDBBackedPageGraph();
+
     private static final IterativePageRankCalculator iterativeCalculator = new IterativePageRankCalculator();
     private static final MatrixPageRankCalculator matrixCalculator = new MatrixPageRankCalculator();
     private static final FilePageRankCalculator fileCalculator;
@@ -57,43 +59,36 @@ public class PageRankCalculatorTest {
         dangingGraph.add("www.2.com", "www.0.com");
         dangingGraph.add("www.2.com", "www.3.com");
 
-        for (int i = 0; i < 1; i++) {
-            for (int j = i - 1; j < i; j++) {
+        minimalGraph.add("www.0.com", "www.1.com");
+
+        for (int i = 0; i < 100; i++) {
+            for (int j = i - 10; j < i; j++) {
                 largeGraph.add(String.format("www.%d.com", i), String.format("www.%d.com", j));
             }
         }
     }
 
     @Test
-    public void smallGraphRanks_shouldSumToOne() {
-        runRankAssertionTest(smallGraph, "simple");
+    public void iterativeCalculator_shouldSumToOne() {
+        runRankAssertionTest(iterativeCalculator, "iterative calculator");
     }
 
     @Test
-    public void danglingGraphRanks_shouldSumToOne() {
-        runRankAssertionTest(dangingGraph, "dangling");
+    public void matrixCalculator_shouldSumToOne() {
+        runRankAssertionTest(matrixCalculator, "matrix calculator");
     }
 
     @Test
-    public void largeGraphRanks_shouldSumToOne() {
-        runRankAssertionTest(largeGraph, "large");
+    public void fileCalculator_shouldSumToOne() {
+        runRankAssertionTest(fileCalculator, "file calculator");
     }
 
-    @Test
-    public void simpleFlowGraphRanks_shouldSumToOne() {
-        runRankAssertionTest(simpleFlowGraph, "simple flow");
-    }
-
-    private void runRankAssertionTest(PageGraph graph, String name) {
-//        assertRankSumsToOne(iterativeCalculator.initialRank(graph), name + ": initial");
-//        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 1), name + ": 1 iteration");
-//        assertRankSumsToOne(iterativeCalculator.computeMany(graph, 30), name + ": 30 iterations");
-//
-//        assertRankSumsToOne(matrixCalculator.computeMany(graph, 1), name + ": 1 iteration");
-//        assertRankSumsToOne(matrixCalculator.computeMany(graph, 30), name + ": 30 iterations");
-
-        assertRankSumsToOne(fileCalculator.computeMany(graph, 1), name + ": 1 iteration");
-        assertRankSumsToOne(fileCalculator.computeMany(graph, 30), name + ": 30 iterations");
+    private void runRankAssertionTest(PageRankCalculator calculator, String name) {
+        assertRankSumsToOne(calculator.computeMany(smallGraph, 30), name + ": smallGraph");
+        assertRankSumsToOne(calculator.computeMany(dangingGraph, 30), name + ": dangingGraph");
+        assertRankSumsToOne(calculator.computeMany(minimalGraph, 30), name + ": minimalGraph");
+        assertRankSumsToOne(calculator.computeMany(largeGraph, 30), name + ": largeGraph");
+        assertRankSumsToOne(calculator.computeMany(simpleFlowGraph, 30), name + ": simpleFlowGraph");
     }
 
     private void assertRankSumsToOne(PageRank pageRank, String failMessage) {

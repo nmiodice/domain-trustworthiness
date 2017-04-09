@@ -9,11 +9,11 @@ import org.junit.Test;
 
 public class PageRankPerformanceTest {
     private static final Integer[] STRESS_TEST_ITERATION_VALUES = new Integer[] { 1, 2, 4, 8, 16 };
-    private static final Integer PAGE_COUNT = 300000;
+    private static final Integer PAGE_COUNT = 10000;
     private static final Integer OUTBOUND_EDGE_COUNT = 50;
 
     private static final TestData[] TESTS = new TestData[] {
-//        new TestData(PageGraphFactory.memoryDBBackedPageGraph(), "in-memory-graph") };
+        new TestData(PageGraphFactory.memoryDBBackedPageGraph(), "in-memory-graph"),
         new TestData(PageGraphFactory.fileDBBackedPageGraph(), "on-disk-graph") };
 
     @AfterClass
@@ -55,8 +55,9 @@ public class PageRankPerformanceTest {
 
     private void time(TestData test, int iterationCount) {
         long start = System.currentTimeMillis();
-        PageRankCalculator calc = PageRankCalculatorFactory.getFileCalculator(Files.createTempDir().toPath());
-//        PageRankCalculator calc = PageRankCalculatorFactory.getIterativeCalculator();
+        PageRankCalculator calc = PageRankCalculatorFactory.getFileCalculator(Files.createTempDir()
+            .toPath());
+        //        PageRankCalculator calc = PageRankCalculatorFactory.getIterativeCalculator();
 
         calc.computeMany(test.graph, iterationCount);
         long end = System.currentTimeMillis();
