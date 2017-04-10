@@ -5,6 +5,7 @@ import com.iodice.crawler.pagegraph.PageGraph;
 import com.iodice.crawler.pagegraph.PageGraphFactory;
 import lombok.AllArgsConstructor;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PageRankPerformanceTest {
@@ -36,7 +37,7 @@ public class PageRankPerformanceTest {
         System.out.printf("graph init: %-20s %-20s\n", test.type, timeFmt);
     }
 
-    @Test
+    @Ignore
     public void runSuite() {
         for (TestData test : TESTS) {
             timeGraphInitialization(test);

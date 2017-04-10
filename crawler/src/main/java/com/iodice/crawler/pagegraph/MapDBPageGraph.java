@@ -4,6 +4,8 @@ import org.apache.commons.lang.Validate;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +17,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MapDBPageGraph implements PageGraph {
+    private static final Logger logger = LoggerFactory.getLogger(MapDBPageGraph.class);
+
     private final DB db;
     private final NavigableSet<Object[]> graph;
     private final PageGraphUtil pageGraphUtil;
@@ -30,6 +34,8 @@ public class MapDBPageGraph implements PageGraph {
             .serializer(BTreeKeySerializer.ARRAY2)
             .make();
         pageGraphUtil = new PageGraphUtil(db);
+
+        logger.info("graph initialized, type = '%s'", dbType.toString());
     }
 
     @Override
@@ -94,7 +100,7 @@ public class MapDBPageGraph implements PageGraph {
 
     private void printTime(long start, long end, String name) {
         String timeFmt = String.format("%.2f", (end - start) / 1000.0);
-        System.out.printf("graph init: %-20s %-20s\n", name, timeFmt);
+        logger.info("graph init: %-20s %-20s\n", name, timeFmt);
     }
 
     @Override
@@ -138,7 +144,7 @@ public class MapDBPageGraph implements PageGraph {
             Set<Integer> intersection = intersectionWithCopy(edges, targetPages);
 
             pointers.addAll(intersection.stream()
-                .map(aPage -> new Integer[] { aPage, pageID })
+                .map(aPage -> new Integer[] { pageID, aPage })
                 .collect(Collectors.toSet()));
 
         }

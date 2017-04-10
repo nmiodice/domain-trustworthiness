@@ -12,7 +12,6 @@ public class PageRankCalculatorFactory {
     }
 
     public static PageRankCalculator getFileCalculator(Path workingDirectory) {
-        System.out.println(workingDirectory);
         return new FilePageRankCalculator(workingDirectory);
     }
 }

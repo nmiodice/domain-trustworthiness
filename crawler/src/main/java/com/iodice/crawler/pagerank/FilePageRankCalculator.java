@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class FilePageRankCalculator extends BasePageRankCalculator {
+    private static final Logger logger = LoggerFactory.getLogger(FilePageRankCalculator.class);
+
     private static final String GRAPH_FOLDER = "graph/";
     private static final int PARTITION_SIZE = 500;
     private Path base;
@@ -35,6 +39,8 @@ class FilePageRankCalculator extends BasePageRankCalculator {
         Validate.isTrue(baseDirectory.toFile()
             .isDirectory(), "base directory is not a directory!");
         base = baseDirectory;
+
+        logger.info("initializing page rank calculator");
         initFileSystem();
     }
 
@@ -47,6 +53,7 @@ class FilePageRankCalculator extends BasePageRankCalculator {
 
     private void initPartitionRanges(PageGraph graph) {
         partitions = Lists.partition(new ArrayList<>(graph.getPageIDs()), PARTITION_SIZE);
+        logger.info(String.format("found %d partitions for graph", partitions.size()));
     }
 
     @Override
@@ -69,7 +76,7 @@ class FilePageRankCalculator extends BasePageRankCalculator {
 
     private void printTime (long start, long end, String name) {
         String timeFmt = String.format("%.2f", (end - start) / 1000.0);
-        System.out.printf("graph init: %-20s %-20s\n", name, timeFmt);
+        logger.info("graph init: %-20s %-20s\n", name, timeFmt);
     }
 
     @Override
