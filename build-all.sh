@@ -57,5 +57,7 @@ installMavenLocal $BUILD_DIR/config-1.0-SNAPSHOT-jar-with-dependencies.jar com.i
 buildProjectAndCopyJar pagerankstore $BUILD_DIR
 installMavenLocal $BUILD_DIR/pagerankstore-1.0-SNAPSHOT-jar-with-dependencies.jar com.iodice pagerankstore
 
-buildProjectAndCopyJar crawler $BUILD_DIR
+buildProjectAndCopyJar crawler-scheduler-node $BUILD_DIR
+buildProjectAndCopyJar crawler-worker-node $BUILD_DIR
+
 buildProjectAndCopyJar webserver $BUILD_DIR
