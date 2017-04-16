@@ -6,17 +6,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class QueueReader extends QueueBase {
+class QueueReader extends QueueBase {
     private static final Logger logger = LoggerFactory.getLogger(QueueReader.class);
 
-    public QueueReader(String queueURL) {
+    QueueReader(String queueURL) {
         super(queueURL);
     }
 
     /**
      * A blocking operation which waits for the next message and returns the job parameters parsed from that message
      */
-    public String getMessage() throws QueueException {
+    String getMessage() throws QueueException {
         Message queueMessage = getMessageBlocking();
         sqsClient.deleteMessage(queueUrl, queueMessage.getReceiptHandle());
         return queueMessage.getBody();

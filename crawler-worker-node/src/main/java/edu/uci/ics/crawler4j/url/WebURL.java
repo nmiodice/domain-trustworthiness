@@ -21,6 +21,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -30,24 +31,43 @@ import java.io.Serializable;
  * @author Yasser Ganjisaffar
  */
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Builder
 public class WebURL implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Setter(AccessLevel.NONE)
+    @Getter
     private String url;
 
+    @Getter @Setter
     private String parentUrl;
-    private short depth;
+
+    @Getter
     private String domain;
+
+    @Getter
     private String subDomain;
-    private String path;
+
+    @Getter @Setter
     private String anchor;
-    private String tag;
+
+    @Getter @Setter
+    private String Tag;
+
+    @Getter @Setter
+    private int depth;
+
+    public WebURL() {
+        super();
+    }
+
+    public WebURL(String url) {
+        super();
+        setURL(url);
+    }
 
     public void setURL(String url) {
         this.url = url;
@@ -72,11 +92,6 @@ public class WebURL implements Serializable {
                 }
                 subDomain += parts[i];
             }
-        }
-        path = url.substring(domainEndIdx);
-        int pathEndIdx = path.indexOf('?');
-        if (pathEndIdx >= 0) {
-            path = path.substring(0, pathEndIdx);
         }
     }
 }

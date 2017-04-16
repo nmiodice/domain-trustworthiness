@@ -10,7 +10,6 @@ public class WebURLTest {
 
     @Test
     public void testNoLastSlash() {
-        WebURL webUrl = new WebURL();
-        webUrl.setURL("http://google.com");
+        WebURL webUrl = new WebURL("http://google.com");
     }
 }

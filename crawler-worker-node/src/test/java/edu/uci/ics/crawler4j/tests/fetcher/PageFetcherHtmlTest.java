@@ -44,9 +44,7 @@ public class PageFetcherHtmlTest {
                 .withHeader("Content-Type", "application/pdf")));
 
         CrawlConfig cfg = new CrawlConfig();
-        WebURL url = new WebURL();
-
-        url.setURL("http://localhost:8080/some/index.html");
+        WebURL url = new WebURL("http://localhost:8080/some/index.html");
         PageFetcher pf = new PageFetcherHtmlOnly(cfg);
         pf.fetchPage(url)
             .fetchContent(new Page(url), 47);

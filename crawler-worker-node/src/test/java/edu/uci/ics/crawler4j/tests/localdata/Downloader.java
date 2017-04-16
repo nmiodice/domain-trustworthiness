@@ -75,8 +75,7 @@ public class Downloader {
     }
 
     private Page download(String url) {
-        WebURL curURL = new WebURL();
-        curURL.setURL(url);
+        WebURL curURL = new WebURL(url);
         PageFetchResult fetchResult = null;
         try {
             fetchResult = pageFetcher.fetchPage(curURL);

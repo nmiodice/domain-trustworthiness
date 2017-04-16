@@ -360,8 +360,7 @@ public class WebCrawler implements Runnable {
 
                     if (myController.getConfig()
                         .isFollowRedirects()) {
-                        WebURL webURL = new WebURL();
-                        webURL.setURL(movedToUrl);
+                        WebURL webURL = new WebURL(movedToUrl);
                         webURL.setParentUrl(curURL.getParentUrl());
                         webURL.setDepth(curURL.getDepth());
                         webURL.setAnchor(curURL.getAnchor());
@@ -407,24 +406,24 @@ public class WebCrawler implements Runnable {
 
                 parser.parse(page, curURL.getUrl());
 
-                if (shouldFollowLinksIn(page.getWebURL())) {
-                    ParseData parseData = page.getParseData();
-                    List<WebURL> toSchedule = new ArrayList<>();
-
-                    for (WebURL webURL : parseData.getOutgoingUrls()) {
-
-                        if (shouldVisit(page, webURL) && robotsTxtServer.allows(webURL)) {
-                            toSchedule.add(webURL);
-                        }
-
-                    }
-                    frontier.scheduleAll(toSchedule, curURL);
-                } else {
-                    logger.debug(
-                        "Not looking for links in page {}, " + "as per your \"shouldFollowLinksInPage\" policy",
-                        page.getWebURL()
-                            .getUrl());
-                }
+//                if (shouldFollowLinksIn(page.getWebURL())) {
+//                    ParseData parseData = page.getParseData();
+//                    List<WebURL> toSchedule = new ArrayList<>();
+//
+//                    for (WebURL webURL : parseData.getOutgoingUrls()) {
+//
+//                        if (shouldVisit(page, webURL) && robotsTxtServer.allows(webURL)) {
+//                            toSchedule.add(webURL);
+//                        }
+//
+//                    }
+//                    frontier.scheduleAll(toSchedule, curURL);
+//                } else {
+//                    logger.debug(
+//                        "Not looking for links in page {}, " + "as per your \"shouldFollowLinksInPage\" policy",
+//                        page.getWebURL()
+//                            .getUrl());
+//                }
                 visit(page);
             }
         } catch (PageBiggerThanMaxSizeException e) {

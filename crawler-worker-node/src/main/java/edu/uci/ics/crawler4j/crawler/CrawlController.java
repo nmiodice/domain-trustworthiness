@@ -307,8 +307,7 @@ public class CrawlController extends Configurable {
             logger.error("Invalid seed URL: {}", pageUrl);
         } else {
 
-            WebURL webUrl = new WebURL();
-            webUrl.setURL(canonicalUrl);
+            WebURL webUrl = new WebURL(canonicalUrl);
             webUrl.setDepth((short) 0);
             if (robotsTxtServer.allows(webUrl)) {
                 frontier.schedule(webUrl, null);

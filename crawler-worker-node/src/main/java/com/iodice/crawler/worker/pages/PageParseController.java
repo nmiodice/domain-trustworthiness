@@ -1,6 +1,6 @@
 package com.iodice.crawler.worker.pages;
 
-import com.iodice.crawler.worker.WorkQueueAdaptor;
+import com.iodice.crawler.worker.queue.WorkQueueAdaptor;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
@@ -8,7 +8,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotsTxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotsTxtServer;
 
 public class PageParseController {
-    public static final int CRAWLER_COUNT = 1;
+    private static final int CRAWLER_COUNT = 1;
 
     public void start() throws Exception {
         CrawlConfig config = new CrawlConfig();

@@ -4,42 +4,44 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Collection;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class PageVisitor extends WebCrawler {
+    private static final Logger logger = LoggerFactory.getLogger(PageVisitor.class);
+    private static final Pattern FILTERS = Pattern.compile(
+        ".*(\\.(css|js|bmp|gif|jpe?g|JPE?G|png|tiff?|ico|nef|raw|mid|mp2|mp3|mp4|wav|wma|flv|mpe?g"
+            + "|avi|mov|mpeg|ram|m4v|wmv|rm|smil|pdf|doc|docx|pub|xls|xlsx|vsd|ppt|pptx|swf"
+            + "|zip|rar|gz|bz2|7z|bin|xml|txt|java|c|cpp|exe))$");
 
-    private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg" + "|png|mp3|mp3|zip|gz))$");
-
-    /**
-     * This method receives two parameters. The first parameter is the page
-     * in which we have discovered this new url and the second parameter is
-     * the new url. You should implement this function to specify whether
-     * the given url should be crawled or not (based on your crawling logic).
-     * In this example, we are instructing the crawler to ignore urls that
-     * have css, js, git, ... extensions and to only accept urls that start
-     * with "http://www.ics.uci.edu/". In this case, we didn't need the
-     * referringPage parameter to make the decision.
-     */
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
-        String href = url.getUrl()
-            .toLowerCase();
-        return !FILTERS.matcher(href)
-            .matches() && href.startsWith("http://www.ics.uci.edu/");
+        return shouldVisitUrl(url.getUrl());
     }
 
-    /**
-     * This function is called when a page is fetched and ready
-     * to be processed by your program.
-     */
+    private boolean shouldVisitUrl(String url) {
+        return !FILTERS.matcher(url.toLowerCase())
+            .matches();
+    }
+
     @Override
     public void visit(Page page) {
         if (page.getParseData() instanceof HtmlParseData) {
-            HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            frontier.scheduleAll(htmlParseData.getOutgoingUrls(), page.getWebURL());
+            WebURL url = page.getWebURL();
+            Collection<WebURL> outgoing = page.getParseData()
+                .getOutgoingUrls()
+                .stream()
+                .filter(webUrl -> shouldVisitUrl(webUrl.getUrl()))
+                .collect(Collectors.toList());
+
+            frontier.scheduleAll(outgoing, url);
+            logger.info(String.format("%d URLs scheduled from %s ", outgoing.size(),
+                StringUtils.substring(url.getDomain(), 0, 20)));
         }
     }
 }

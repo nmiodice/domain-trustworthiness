@@ -1,11 +1,10 @@
-package com.iodice.crawler.worker;
+package com.iodice.crawler.worker.queue;
 
 import com.iodice.config.Config;
-import com.iodice.crawler.worker.queue.QueueException;
-import com.iodice.crawler.worker.queue.QueueReader;
-import com.iodice.crawler.worker.queue.QueueWriter;
 import edu.uci.ics.crawler4j.frontier.Frontier;
 import edu.uci.ics.crawler4j.url.WebURL;
+import org.apache.commons.lang.Validate;
+import org.json.simple.JSONObject;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,12 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WorkQueueAdaptor implements Frontier {
+    private static final String SOURCE_KEY = "source";
+    private static final String DESTINATION_KEY = "destination";
     private QueueReader incoming;
-    private QueueWriter outging;
+    private QueueWriter outgoing;
 
     public WorkQueueAdaptor() {
         incoming = new QueueReader(Config.getString("sqs.request.queue"));
-        outging = new QueueWriter(Config.getString("sqs.response.queue"));
+        outgoing = new QueueWriter(Config.getString("sqs.response.queue"));
     }
 
     @Override
@@ -27,9 +28,8 @@ public class WorkQueueAdaptor implements Frontier {
         try {
             String message = incoming.getMessage();
             return Arrays.stream(message.split("\n"))
-                .map(url -> WebURL.builder()
-                    .url(url)
-                    .build())
+                .filter(line -> line.length() > 0)
+                .map(WebURL::new)
                 .collect(Collectors.toList());
         } catch (QueueException e) {
             throw new RuntimeException(e);
@@ -38,8 +38,24 @@ public class WorkQueueAdaptor implements Frontier {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void scheduleAll(Collection<WebURL> destinations, WebURL source) {
-        System.out.println("hahaha " + source.getUrl());
+        Validate.notNull(destinations, "cannot schedule null URL list");
+        Validate.notNull(source, "cannot schedule without a source");
+        Validate.notEmpty(source.getUrl(), "cannot schedule with empty source URL");
+
+        if (destinations.size() == 0) {
+            return;
+        }
+
+        JSONObject message = new JSONObject();
+        message.put(SOURCE_KEY, source.getUrl());
+
+        List<String> destinationUrls = destinations.stream()
+            .map(WebURL::getUrl)
+            .collect(Collectors.toList());
+        message.put(DESTINATION_KEY, destinationUrls);
+        outgoing.send(message.toJSONString());
     }
 
     @Override

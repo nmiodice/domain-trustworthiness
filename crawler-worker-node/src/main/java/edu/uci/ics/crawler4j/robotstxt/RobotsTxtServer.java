@@ -93,11 +93,11 @@ public class RobotsTxtServer {
     }
 
     private HostDirectives fetchDirectives(URL url) {
-        WebURL robotsTxtUrl = new WebURL();
         String host = getHost(url);
         String port = ((url.getPort() == url.getDefaultPort()) || (url.getPort() == -1)) ? "" : (":" + url.getPort());
         String proto = url.getProtocol();
-        robotsTxtUrl.setURL(proto + "://" + host + port + "/robots.txt");
+
+        WebURL robotsTxtUrl = new WebURL(proto + "://" + host + port + "/robots.txt");
         HostDirectives directives = null;
         PageFetchResult fetchResult = null;
         try {

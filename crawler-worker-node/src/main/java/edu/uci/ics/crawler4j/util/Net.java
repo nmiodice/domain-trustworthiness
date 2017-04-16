@@ -20,13 +20,12 @@ public class Net {
         if (input != null) {
             Matcher matcher = pattern.matcher(input);
             while (matcher.find()) {
-                WebURL webURL = new WebURL();
                 String urlStr = matcher.group();
                 if (!urlStr.startsWith("http")) {
                     urlStr = "http://" + urlStr;
                 }
 
-                webURL.setURL(urlStr);
+                WebURL webURL = new WebURL(urlStr);
                 extractedUrls.add(webURL);
             }
         }

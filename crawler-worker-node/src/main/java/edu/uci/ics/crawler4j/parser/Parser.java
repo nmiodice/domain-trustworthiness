@@ -135,8 +135,7 @@ public class Parser extends Configurable {
                     && !hrefLoweredCase.contains("@")) {
                     String url = URLCanonicalizer.getCanonicalURL(href, contextURL);
                     if (url != null) {
-                        WebURL webURL = new WebURL();
-                        webURL.setURL(url);
+                        WebURL webURL = new WebURL(url);
                         webURL.setTag(urlAnchorPair.getTag());
                         webURL.setAnchor(urlAnchorPair.getAnchor());
                         outgoingUrls.add(webURL);
