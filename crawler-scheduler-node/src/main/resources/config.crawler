@@ -1,4 +1,4 @@
-crawler.storage_directory=/tmp/crawler
-crawler.seeds=http://www.reddit.com, http://www.nytimes.com, http://www.theguardian.com, http://www.cnn.com, http://www.bbc.co.uk, http://www.huffingtonpost.com, http://www.washingtonpost.com, http://www.indiatimes.com, http://www.news.yahoo.com, http://www.foxnews.com, http://www.weather.com, http://www.forbes.com, http://www.news.google.com, http://www.bloomberg.com, http://www.usatoday.com, http://www.reuters.com, http://www.wsj.com, http://www.money.cnn.com, http://www.drudgereport.com, http://www.time.com, http://www.latimes.com, http://www.cnbc.com, http://www.nbcnews.com
+scheduler.seeds = http://www.reddit.com, http://www.nytimes.com, http://www.theguardian.com, http://www.cnn.com,http://www.bbc.co.uk, http://www.huffingtonpost.com, http://www.washingtonpost.com, http://www.indiatimes.com, http://www.news.yahoo.com, http://www.foxnews.com, http://www.weather.com, http://www.forbes.com, http://www.news.google.com, http://www.bloomberg.com, http://www.usatoday.com, http://www.reuters.com, http://www.wsj.com, http://www.money.cnn.com, http://www.drudgereport.com, http://www.time.com, http://www.latimes.com, http://www.cnbc.com, http://www.nbcnews.com
 
-sqs.queue_url = https://sqs.us-east-1.amazonaws.com/217363501860/PageRankRequest
+sqs.request.queue = https://sqs.us-east-1.amazonaws.com/217363501860/CRAWLER_REQUEST_QUEUE
+sqs.response.queue = https://sqs.us-east-1.amazonaws.com/217363501860/CRAWLER_RESPONSE_QUEUE

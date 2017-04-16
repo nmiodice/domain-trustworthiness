@@ -1,6 +1,9 @@
 package com.iodice.crawler.worker.queue;
 
 import com.iodice.config.Config;
+import com.iodice.sqs.simplequeue.QueueException;
+import com.iodice.sqs.simplequeue.QueueWriter;
+import com.iodice.sqs.simplequeue.QueueReader;
 import edu.uci.ics.crawler4j.frontier.Frontier;
 import edu.uci.ics.crawler4j.url.WebURL;
 import org.apache.commons.lang.Validate;

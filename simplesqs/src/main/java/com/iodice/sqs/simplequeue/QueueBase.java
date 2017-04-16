@@ -1,4 +1,4 @@
-package com.iodice.crawler.worker.queue;
+package com.iodice.sqs.simplequeue;
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.sqs.AmazonSQS;

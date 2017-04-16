@@ -103,7 +103,7 @@ public class CrawlConfig {
     private boolean onlineTldListUpdate = false;
 
     /**
-     * Should the crawler stop running when the queue is empty?
+     * Should the crawler stop running when the simplequeue is empty?
      */
     private boolean shutdownOnEmptyQueue = true;
 
@@ -330,7 +330,7 @@ public class CrawlConfig {
     }
 
     /**
-     * Should the crawler stop running when the queue is empty?
+     * Should the crawler stop running when the simplequeue is empty?
      */
     public void setShutdownOnEmptyQueue(boolean shutdown) {
         shutdownOnEmptyQueue = shutdown;

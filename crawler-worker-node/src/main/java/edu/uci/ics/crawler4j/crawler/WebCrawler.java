@@ -80,7 +80,7 @@ public class WebCrawler implements Runnable {
     private RobotsTxtServer robotsTxtServer;
 
     /**
-     * The Frontier object that manages the crawl queue.
+     * The Frontier object that manages the crawl simplequeue.
      */
     public Frontier frontier;
 
@@ -298,7 +298,7 @@ public class WebCrawler implements Runnable {
     }
 
     /**
-     * Determine whether links found at the given URL should be added to the queue for crawling.
+     * Determine whether links found at the given URL should be added to the simplequeue for crawling.
      * By default this method returns true always, but classes that extend WebCrawler can
      * override it in order to implement particular policies about which pages should be
      * mined for outgoing links and which should not.
@@ -309,7 +309,7 @@ public class WebCrawler implements Runnable {
      * return false from this method will not be subject to robots.txt filtering.
      *
      * @param url the URL of the page under consideration
-     * @return true if outgoing links from this page should be added to the queue.
+     * @return true if outgoing links from this page should be added to the simplequeue.
      */
     protected boolean shouldFollowLinksIn(WebURL url) {
         return true;

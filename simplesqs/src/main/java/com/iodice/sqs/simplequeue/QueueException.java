@@ -1,6 +1,6 @@
-package com.iodice.crawler.worker.queue;
+package com.iodice.sqs.simplequeue;
 
-class QueueException extends Exception {
+public class QueueException extends Exception {
     QueueException(String message, Throwable cause) {
         super(message, cause);
     }

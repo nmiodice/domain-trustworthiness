@@ -1,11 +1,11 @@
-package com.iodice.crawler.worker.queue;
+package com.iodice.sqs.simplequeue;
 
 public class QueueWriter extends QueueBase {
-    QueueWriter(String queueURL) {
+    public QueueWriter(String queueURL) {
         super(queueURL);
     }
 
-    void send(String message) {
+    public void send(String message) {
         sqsClient.sendMessage(queueUrl, message);
     }
 }
