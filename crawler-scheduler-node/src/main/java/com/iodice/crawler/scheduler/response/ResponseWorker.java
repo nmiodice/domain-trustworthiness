@@ -1,15 +1,13 @@
-package com.iodice.crawler.scheduler;
+package com.iodice.crawler.scheduler.response;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
-import com.iodice.crawler.scheduler.processor.ResponseHandlerPipeline;
-import com.iodice.crawler.scheduler.processor.ResponseHandlerPipelineFactory;
 import com.iodice.crawler.scheduler.queue.WorkQueueAdaptor;
 
-public class WorkScheduler {
+public class ResponseWorker {
     private WorkQueueAdaptor responseQueue;
     private ResponseHandlerPipeline responseHandler;
 
-    public WorkScheduler() {
+    public ResponseWorker() {
         responseQueue = new WorkQueueAdaptor();
         responseHandler = ResponseHandlerPipelineFactory.defaultPipeline();
     }

@@ -1,4 +1,4 @@
-package com.iodice.crawler.scheduler.processor.handlers;
+package com.iodice.crawler.scheduler.response.handlers;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 
