@@ -150,10 +150,10 @@ public class RobotsTxtServer {
             // which is perfectly ok
             logger.trace("robots.txt probably does not exist.", se);
         } catch (PageBiggerThanMaxSizeException pbtms) {
-            logger.error("Error occurred while fetching (robots) url: {}, {}", robotsTxtUrl.getUrl(),
+            logger.error("Error occurred while fetching (robots) edu.uci.ics.url: {}, {}", robotsTxtUrl.getUrl(),
                 pbtms.getMessage());
         } catch (Exception e) {
-            logger.error("Error occurred while fetching (robots) url: " + robotsTxtUrl.getUrl(), e);
+            logger.error("Error occurred while fetching (robots) edu.uci.ics.url: " + robotsTxtUrl.getUrl(), e);
         } finally {
             if (fetchResult != null) {
                 fetchResult.discardContentIfNotConsumed();

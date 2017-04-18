@@ -91,7 +91,7 @@ public class HtmlContentHandler extends DefaultHandler {
                 // http-equiv="refresh" content="0;URL=http://foo.bar/..."
                 if ("refresh".equals(equiv) && (metaRefresh == null)) {
                     int pos = content.toLowerCase()
-                        .indexOf("url=");
+                        .indexOf("edu.uci.ics.url=");
                     if (pos != -1) {
                         metaRefresh = content.substring(pos + 4);
                         addToOutgoingUrls(metaRefresh, localName);

@@ -87,7 +87,7 @@ public class Downloader {
                 return page;
             }
         } catch (Exception e) {
-            logger.error("Error occurred while fetching url: " + curURL.getUrl(), e);
+            logger.error("Error occurred while fetching edu.uci.ics.url: " + curURL.getUrl(), e);
         } finally {
             if (fetchResult != null) {
                 fetchResult.discardContentIfNotConsumed();

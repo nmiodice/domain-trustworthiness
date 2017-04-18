@@ -8556,7 +8556,7 @@ mine.nu
 misconfused.org
 mypets.ws
 myphotos.cc
-neat-url.com
+neat-edu.uci.ics.url.com
 office-on-the.net
 on-the-web.tv
 podzone.net
@@ -8581,7 +8581,7 @@ serveftp.net
 serveftp.org
 servegame.org
 shacknet.nu
-simple-url.com
+simple-edu.uci.ics.url.com
 space-to-rent.com
 stuff-4-sale.org
 stuff-4-sale.us

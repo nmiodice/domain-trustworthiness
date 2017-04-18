@@ -312,11 +312,11 @@ public class PageFetcher extends Configurable {
     }
 
     /**
-     * Creates a new HttpUriRequest for the given url. The default is to create a HttpGet without
+     * Creates a new HttpUriRequest for the given edu.uci.ics.url. The default is to create a HttpGet without
      * any further configuration. Subclasses may override this method and provide their own logic.
      *
-     * @param url the url to be fetched
-     * @return the HttpUriRequest for the given url
+     * @param url the edu.uci.ics.url to be fetched
+     * @return the HttpUriRequest for the given edu.uci.ics.url
      */
     protected HttpUriRequest newHttpUriRequest(String url) {
         return new HttpGet(url);

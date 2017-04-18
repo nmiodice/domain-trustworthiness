@@ -14,9 +14,9 @@ public class SimplePageVisitor extends WebCrawler {
 
     /**
      * This method receives two parameters. The first parameter is the page
-     * in which we have discovered this new url and the second parameter is
-     * the new url. You should implement this function to specify whether
-     * the given url should be crawled or not (based on your crawling logic).
+     * in which we have discovered this new edu.uci.ics.url and the second parameter is
+     * the new edu.uci.ics.url. You should implement this function to specify whether
+     * the given edu.uci.ics.url should be crawled or not (based on your crawling logic).
      * In this example, we are instructing the crawler to ignore urls that
      * have css, js, git, ... extensions and to only accept urls that start
      * with "http://www.ics.uci.edu/". In this case, we didn't need the

@@ -113,7 +113,7 @@ public abstract class AuthInfo {
     }
 
     /**
-     * @return file/path which is the rest of the url after the domain name (eg: /login.php)
+     * @return file/path which is the rest of the edu.uci.ics.url after the domain name (eg: /login.php)
      */
     public String getLoginTarget() {
         return loginTarget;
