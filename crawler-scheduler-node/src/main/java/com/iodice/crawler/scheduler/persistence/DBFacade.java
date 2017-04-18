@@ -4,6 +4,7 @@ import com.iodice.config.Config;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,5 +41,9 @@ class DBFacade {
         }
 
         return results;
+    }
+
+    void createIndex(String column, String collection) {
+        getCollection(collection).createIndex(Indexes.ascending(column));
     }
 }

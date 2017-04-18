@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class DomainStorageHandler implements ResponseHandler {
+public class DomainGraphStorageHandler implements ResponseHandler {
     private PersistenceAdaptor persistence = new PersistenceAdaptor();
 
     @Override
@@ -27,7 +27,9 @@ public class DomainStorageHandler implements ResponseHandler {
 
     private String toDomain(String url) {
         try {
-            return URL.parse(url).host().toString();
+            return URL.parse(url)
+                .host()
+                .toString();
         } catch (GalimatiasParseException ex) {
             return null;
         }
