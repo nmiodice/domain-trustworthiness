@@ -2,41 +2,23 @@ package com.iodice.crawler.scheduler.response;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.queue.ResponseQueueAdaptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.iodice.crawler.scheduler.threads.Looper;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-class ResponseWorker implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(ResponseWorker.class);
-    private final static AtomicInteger WORKER_ID_COUNTER = new AtomicInteger();
+class ResponseWorker extends Looper {
 
     private ResponseQueueAdaptor responseQueue;
     private ResponseHandlerPipeline responseHandler;
-    private boolean stopped = false;
-    private final int threadID;
 
     ResponseWorker() {
+        super();
         responseQueue = new ResponseQueueAdaptor();
         responseHandler = ResponseHandlerPipelineFactory.defaultPipeline();
-        threadID = WORKER_ID_COUNTER.incrementAndGet();
-    }
-
-    public void stop() {
-        logger.info(String.format("worker %d is stopping", threadID));
-        stopped = true;
     }
 
     @Override
-    public void run() {
-        while (!stopped) {
-            try {
-                WorkResponse response = responseQueue.nextResponse();
-                responseHandler.handle(response);
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                logger.error(String.format("worker %d encountered an exception: %s", threadID, e.getMessage()), e);
-            }
-        }
+    public void doOneWorkLoop() throws Exception {
+        WorkResponse response = responseQueue.nextResponse();
+        responseHandler.handle(response);
+        Thread.sleep(1000);
     }
 }
