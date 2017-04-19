@@ -10,13 +10,13 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class WorkQueueAdaptor {
+public class ResponseQueueAdaptor {
     private static final String SOURCE_KEY = "source";
     private static final String DESTINATION_KEY = "destination";
 
     private QueueReader reader;
 
-    public WorkQueueAdaptor() {
+    public ResponseQueueAdaptor() {
         reader = new QueueReader(Config.getString("sqs.response.queue"));
     }
 
@@ -42,5 +42,4 @@ public class WorkQueueAdaptor {
             .destinations(destinations)
             .build();
     }
-
 }
