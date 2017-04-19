@@ -8,9 +8,7 @@ public class WorkQueueStorageHandler implements ResponseHandler {
 
     @Override
     public WorkResponse handle(WorkResponse response) {
-        for (String url : response.getDestinations()) {
-            persistence.enqueueURL(url);
-        }
+        persistence.enqueueURLS(response.getDestinations());
         return response;
     }
 }

@@ -30,11 +30,15 @@ class DBFacade {
         return db.getCollection(collection);
     }
 
-    void put(Document item, String collection) {
-        getCollection(collection).insertMany(Collections.singletonList(item));
+    void put(String collection, Document item) {
+        put(collection, Collections.singletonList(item));
     }
 
-    List<Document> get(Document query, String collection) {
+    void put(String collection, List<Document> items) {
+        getCollection(collection).insertMany(items);
+    }
+
+    List<Document> get(String collection, Document query) {
         List<Document> results = new ArrayList<>();
         for (Document document : getCollection(collection).find(query)) {
             results.add(document);
@@ -43,7 +47,7 @@ class DBFacade {
         return results;
     }
 
-    void createIndex(String column, String collection) {
+    void createIndex(String collection, String column) {
         getCollection(collection).createIndex(Indexes.ascending(column));
     }
 }

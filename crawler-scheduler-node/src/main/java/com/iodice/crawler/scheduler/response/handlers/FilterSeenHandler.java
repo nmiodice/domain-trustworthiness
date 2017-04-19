@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FilterSeenHandler implements ResponseHandler {
@@ -19,9 +21,12 @@ public class FilterSeenHandler implements ResponseHandler {
             logger.warn(String.format("URL '%s' was seen before", response.getSource()));
             return null;
         }
+
         Collection<String> all = response.getDestinations();
-        Collection<String> unseen = all.stream()
-            .filter(url -> !persistence.seenURL(url))
+        Map<String, Boolean> seen = persistence.seenURLS(all);
+        Collection<String> unseen = response.getDestinations()
+            .stream()
+            .filter(seen::get)
             .collect(Collectors.toList());
 
         int filteredCount = all.size() - unseen.size();

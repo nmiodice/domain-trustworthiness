@@ -31,7 +31,12 @@ class ResponseHandlerPipeline {
                 logger.info("exiting handler pipeline early because there are no more outbound links");
                 return;
             }
+            long start = System.currentTimeMillis();
             response = handler.handle(response);
+            long end = System.currentTimeMillis();
+            double duration = (double) (end - start) / 1000.0;
+
+            logger.info(String.format("handler '%s' took %f seconds", handler.getClass().getSimpleName(), duration));
         }
     }
 
