@@ -23,10 +23,10 @@ public class FilterSeenHandler implements ResponseHandler {
         }
 
         Collection<String> all = response.getDestinations();
-        Map<String, Boolean> seen = persistence.seenURLS(all);
+        Map<String, Boolean> isSeen = persistence.seenURLS(all);
         Collection<String> unseen = response.getDestinations()
             .stream()
-            .filter(seen::get)
+            .filter(url -> !isSeen.get(url))
             .collect(Collectors.toList());
 
         int filteredCount = all.size() - unseen.size();

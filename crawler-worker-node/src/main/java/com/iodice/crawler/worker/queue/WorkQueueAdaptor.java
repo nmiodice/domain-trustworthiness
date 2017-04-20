@@ -2,14 +2,13 @@ package com.iodice.crawler.worker.queue;
 
 import com.iodice.config.Config;
 import com.iodice.sqs.simplequeue.QueueException;
-import com.iodice.sqs.simplequeue.QueueWriter;
 import com.iodice.sqs.simplequeue.QueueReader;
+import com.iodice.sqs.simplequeue.QueueWriter;
 import edu.uci.ics.crawler4j.frontier.Frontier;
 import edu.uci.ics.crawler4j.url.WebURL;
 import org.apache.commons.lang.Validate;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -30,8 +29,11 @@ public class WorkQueueAdaptor implements Frontier {
     public List<WebURL> getNextURLs() {
         try {
             String message = incoming.getMessage();
-            return Arrays.stream(message.split("\n"))
-                .filter(line -> line.length() > 0)
+            JSONObject json = new JSONObject(message);
+            return json.getJSONArray("urls")
+                .toList()
+                .stream()
+                .map(Object::toString)
                 .map(WebURL::new)
                 .collect(Collectors.toList());
         } catch (QueueException e) {
@@ -41,7 +43,6 @@ public class WorkQueueAdaptor implements Frontier {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void scheduleAll(Collection<WebURL> destinations, WebURL source) {
         Validate.notNull(destinations, "cannot schedule null URL list");
         Validate.notNull(source, "cannot schedule without a source");
@@ -51,14 +52,14 @@ public class WorkQueueAdaptor implements Frontier {
             return;
         }
 
-        JSONObject message = new JSONObject();
-        message.put(SOURCE_KEY, source.getUrl());
+        JSONObject json = new JSONObject();
+        json.put(SOURCE_KEY, source.getUrl());
 
         List<String> destinationUrls = destinations.stream()
             .map(WebURL::getUrl)
             .collect(Collectors.toList());
-        message.put(DESTINATION_KEY, destinationUrls);
-        outgoing.send(message.toJSONString());
+        json.put(DESTINATION_KEY, destinationUrls);
+        outgoing.send(json.toString());
     }
 
     @Override

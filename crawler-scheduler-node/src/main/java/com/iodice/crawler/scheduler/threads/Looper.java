@@ -11,7 +11,7 @@ public abstract class Looper implements Runnable {
     private final static AtomicInteger WORKER_ID_COUNTER = new AtomicInteger();
 
     private boolean stopped = false;
-    private final int threadID;
+    protected final int threadID;
 
     public Looper() {
         threadID = WORKER_ID_COUNTER.incrementAndGet();

@@ -5,7 +5,7 @@ import com.iodice.crawler.scheduler.threads.ExecutorWrapperBase;
 
 public class ResponseWorkerPool extends ExecutorWrapperBase {
 
-    ResponseWorkerPool(int threadCount) {
+    public ResponseWorkerPool(int threadCount) {
         super(threadCount);
     }
 

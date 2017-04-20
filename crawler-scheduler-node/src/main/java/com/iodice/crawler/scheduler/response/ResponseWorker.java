@@ -1,5 +1,6 @@
 package com.iodice.crawler.scheduler.response;
 
+import com.iodice.config.Config;
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.queue.ResponseQueueAdaptor;
 import com.iodice.crawler.scheduler.threads.Looper;
@@ -19,6 +20,6 @@ class ResponseWorker extends Looper {
     public void doOneWorkLoop() throws Exception {
         WorkResponse response = responseQueue.nextResponse();
         responseHandler.handle(response);
-        Thread.sleep(1000);
+        Thread.sleep(Config.getInt("worker.response.time_between_requests"));
     }
 }

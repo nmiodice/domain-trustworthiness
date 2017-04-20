@@ -81,4 +81,17 @@ public class PersistenceAdaptor {
         return new Document(WORK_QUEUE_DOMAIN_KEY, domain).append(WORK_QUEUE_URL_KEY, url)
             .append(WORK_QUEUE_DATE_KEY, new Date());
     }
+
+    public List<String> getNexQueuedDomains(int count) {
+        try {
+            Document sampleQuery = new Document("$sample", new Document("size", count));
+            return db.aggregateAndDelete(WORK_QUEUE_COLLECTION, sampleQuery)
+                .stream()
+                .map(doc -> doc.getString(WORK_QUEUE_URL_KEY))
+                .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+            return null;
+        }
+    }
 }
