@@ -10,9 +10,8 @@ public abstract class Looper implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(Looper.class);
 
     private final static AtomicInteger WORKER_ID_COUNTER = new AtomicInteger();
-
-    private boolean stopped = false;
     protected final int threadID;
+    private boolean stopped = false;
 
     public Looper() {
         threadID = WORKER_ID_COUNTER.incrementAndGet();
@@ -30,7 +29,8 @@ public abstract class Looper implements Runnable {
             try {
                 if (baseWaitTime > 0) {
                     // random jitter to prevent resource thrashing
-                    long randomWait = Math.max(0, baseWaitTime + ThreadLocalRandom.current().nextLong(-1000, 1000));
+                    long randomWait = Math.max(0, baseWaitTime + ThreadLocalRandom.current()
+                        .nextLong(-1000, 1000));
                     Thread.sleep(randomWait);
                 }
                 doOneWorkLoop();
@@ -41,5 +41,6 @@ public abstract class Looper implements Runnable {
     }
 
     public abstract void doOneWorkLoop() throws Exception;
+
     public abstract long getTimeBetweenLoopsInMS();
 }

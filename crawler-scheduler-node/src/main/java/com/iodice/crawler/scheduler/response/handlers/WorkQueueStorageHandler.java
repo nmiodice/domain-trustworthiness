@@ -5,11 +5,11 @@ import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class WorkQueueStorageHandler implements ResponseHandler {
+public class WorkQueueStorageHandler extends ValidatedHandler {
     private PersistenceAdaptor persistence;
 
     @Override
-    public WorkResponse handle(WorkResponse response) {
+    public WorkResponse validatedHandle(WorkResponse response) {
         persistence.enqueueURLS(response.getDestinations());
         return response;
     }

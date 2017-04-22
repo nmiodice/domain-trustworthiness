@@ -7,18 +7,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class FilterSeenHandler implements ResponseHandler {
+public class FilterSeenHandler extends ValidatedHandler {
     private static final Logger logger = LoggerFactory.getLogger(FilterSeenHandler.class);
 
     private PersistenceAdaptor persistence;
 
     @Override
-    public WorkResponse handle(WorkResponse response) {
+    public WorkResponse validatedHandle(WorkResponse response) {
         if (persistence.seenURL(response.getSource())) {
             logger.warn(String.format("URL '%s' was seen before", response.getSource()));
             return null;

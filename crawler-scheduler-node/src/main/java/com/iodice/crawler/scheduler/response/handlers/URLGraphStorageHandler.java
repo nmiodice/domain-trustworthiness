@@ -5,11 +5,11 @@ import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class URLGraphStorageHandler implements ResponseHandler {
+public class URLGraphStorageHandler extends ValidatedHandler {
     private PersistenceAdaptor persistence;
 
     @Override
-    public WorkResponse handle(WorkResponse response) {
+    public WorkResponse validatedHandle(WorkResponse response) {
         persistence.storeURLEdges(response.getSource(), response.getDestinations());
         return response;
     }

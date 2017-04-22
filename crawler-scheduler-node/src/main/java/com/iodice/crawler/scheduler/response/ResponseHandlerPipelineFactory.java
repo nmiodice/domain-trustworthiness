@@ -2,9 +2,9 @@ package com.iodice.crawler.scheduler.response;
 
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import com.iodice.crawler.scheduler.response.handlers.DomainGraphStorageHandler;
-import com.iodice.crawler.scheduler.response.handlers.WorkQueueStorageHandler;
 import com.iodice.crawler.scheduler.response.handlers.FilterSeenHandler;
 import com.iodice.crawler.scheduler.response.handlers.URLGraphStorageHandler;
+import com.iodice.crawler.scheduler.response.handlers.WorkQueueStorageHandler;
 
 public class ResponseHandlerPipelineFactory {
     public static ResponseHandlerPipeline defaultPipeline() {
