@@ -54,11 +54,21 @@ class DBFacade {
     }
 
     List<Document> aggregateAndDelete(String collection, Document... clauses) {
-        AggregateIterable<Document> iterator = getCollection(collection).aggregate(Arrays.asList(clauses));
-        List<Document> results = toList(iterator);
+        // these are documents in an aggregated form and therefore the key (_id) may not
+        // be valid when we try to delete. so it is important to transform them into something deletable
+        // by removing the key
+        List<Document> results = aggregate(collection, clauses);
+        for (Document d : results) {
+            d.remove("_id");
+        }
+
         delete(collection, results);
         return results;
+    }
 
+    List<Document> aggregate(String collection, Document... clauses) {
+        AggregateIterable<Document> iterator = getCollection(collection).aggregate(Arrays.asList(clauses));
+        return toList(iterator);
     }
 
     private void delete(String collection, Collection<Document> items) {
@@ -69,7 +79,14 @@ class DBFacade {
     }
 
     private MongoCollection<Document> getCollection(String collection) {
-        MongoDatabase db = mongo.getDatabase(DB_NAME);
+        return getCollection(collection, DB_NAME);
+    }
+
+    /**
+     * Used only for integration testing
+     */
+    MongoCollection<Document> getCollection(String collection, String dbName) {
+        MongoDatabase db = mongo.getDatabase(dbName);
         return db.getCollection(collection);
     }
 

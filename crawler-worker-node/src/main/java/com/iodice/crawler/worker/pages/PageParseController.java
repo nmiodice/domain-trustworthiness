@@ -8,7 +8,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotsTxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotsTxtServer;
 
 public class PageParseController {
-    private static final int CRAWLER_COUNT = 2;
+    private static final int CRAWLER_COUNT = 5;
 
     public void start() throws Exception {
         CrawlConfig config = new CrawlConfig();

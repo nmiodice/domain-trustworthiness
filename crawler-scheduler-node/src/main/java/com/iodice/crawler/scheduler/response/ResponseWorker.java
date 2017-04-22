@@ -20,6 +20,10 @@ class ResponseWorker extends Looper {
     public void doOneWorkLoop() throws Exception {
         WorkResponse response = responseQueue.nextResponse();
         responseHandler.handle(response);
-        Thread.sleep(Config.getInt("worker.response.time_between_requests"));
+    }
+
+    @Override
+    public long getTimeBetweenLoopsInMS() {
+        return Config.getInt("worker.response.time_between_requests");
     }
 }

@@ -2,11 +2,13 @@ package com.iodice.crawler.scheduler.persistence;
 
 import com.iodice.crawler.scheduler.utils.URLFacade;
 import com.mongodb.BasicDBList;
+import com.mongodb.MongoBulkWriteException;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +22,7 @@ public class PersistenceAdaptor {
 
     private static final String URL_GRAPH_COLLECTION = "UrlGraph";
     private static final String DOMAIN_GRAPH_COLLECTION = "DomainGraph";
-    private static final String GRAPH_SOURCE_KEY = "source";
+    private static final String GRAPH_SOURCE_KEY = "_id";
     private static final String GRAPH_DESTINATIONS_KEY = "destinations";
 
     private static final String WORK_QUEUE_COLLECTION = "DomainQueues";
@@ -28,9 +30,21 @@ public class PersistenceAdaptor {
     private static final String WORK_QUEUE_URL_KEY = "url";
     private static final String WORK_QUEUE_DATE_KEY = "time";
 
-    private static final DBFacade db = new DBFacade();
+    private final DBFacade db;
 
-    static {
+    public PersistenceAdaptor() {
+        this(new DBFacade());
+    }
+
+    /**
+     * should only be used for testing
+     */
+    PersistenceAdaptor(DBFacade db) {
+        this.db = db;
+        initDB();
+    }
+
+    private void initDB() {
         db.createIndex(URL_GRAPH_COLLECTION, GRAPH_SOURCE_KEY);
         db.createIndex(DOMAIN_GRAPH_COLLECTION, GRAPH_SOURCE_KEY);
         logger.info("created indices for DB");
@@ -52,18 +66,66 @@ public class PersistenceAdaptor {
     }
 
     public boolean seenURL(String url) {
-        return !db.get(URL_GRAPH_COLLECTION, new Document(GRAPH_SOURCE_KEY, url))
-            .isEmpty();
+        return seenURLS(Collections.singleton(url)).get(url);
     }
 
     public void storeURLEdges(String source, Collection<String> destinations) {
         Document entry = new Document(GRAPH_SOURCE_KEY, source).append(GRAPH_DESTINATIONS_KEY, destinations);
-        db.put(URL_GRAPH_COLLECTION, entry);
+        store(URL_GRAPH_COLLECTION, entry);
     }
 
     public void storeDomainEdges(String source, Collection<String> destinations) {
         Document entry = new Document(GRAPH_SOURCE_KEY, source).append(GRAPH_DESTINATIONS_KEY, destinations);
-        db.put(DOMAIN_GRAPH_COLLECTION, entry);
+        store(DOMAIN_GRAPH_COLLECTION, entry);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Collection<String> getURLEdges(String source) {
+        Document entry = new Document(GRAPH_SOURCE_KEY, source);
+        List<Document> results = db.get(URL_GRAPH_COLLECTION, entry);
+        return results.stream()
+            .map(document -> (List<String>) document.get(GRAPH_DESTINATIONS_KEY))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+    }
+
+    public List<String> getNexQueuedDomains(int count) {
+        try {
+            Document[] queries = new Document[] { domainQueueSortQuery(), domainQueueGroupQuery(),
+                domainQueueSampleQuery(count) };
+            return db.aggregateAndDelete(WORK_QUEUE_COLLECTION, queries)
+                .stream()
+                .map(doc -> doc.getString(WORK_QUEUE_URL_KEY))
+                .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error(e.toString(), e);
+            return null;
+        }
+    }
+
+    private Document domainQueueSortQuery() {
+        return new Document("$sort", new Document(WORK_QUEUE_DOMAIN_KEY, 1).append(WORK_QUEUE_DATE_KEY, 1));
+    }
+
+    private Document domainQueueGroupQuery() {
+        Document clauses = new Document("_id", dollar(WORK_QUEUE_DOMAIN_KEY)).append(WORK_QUEUE_DOMAIN_KEY,
+            dollarFirst(WORK_QUEUE_DOMAIN_KEY))
+            .append(WORK_QUEUE_DATE_KEY, dollarFirst(WORK_QUEUE_DATE_KEY))
+            .append(WORK_QUEUE_URL_KEY, dollarFirst(WORK_QUEUE_URL_KEY));
+
+        return new Document(dollar("group"), clauses);
+    }
+
+    private Document domainQueueSampleQuery(int sampleSize) {
+        return new Document(dollar("sample"), new Document("size", sampleSize));
+    }
+
+    private Document dollarFirst(String key) {
+        return new Document(dollar("first"), dollar(key));
+    }
+
+    private String dollar(String s) {
+        return "$" + s;
     }
 
     public void enqueueURLS(Collection<String> urls) {
@@ -74,7 +136,7 @@ public class PersistenceAdaptor {
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-        db.put(WORK_QUEUE_COLLECTION, entries);
+        store(WORK_QUEUE_COLLECTION, entries);
     }
 
     private Document toURLQueueDocument(String domain, String url) {
@@ -82,16 +144,15 @@ public class PersistenceAdaptor {
             .append(WORK_QUEUE_DATE_KEY, new Date());
     }
 
-    public List<String> getNexQueuedDomains(int count) {
+    private void store(String collection, Document document) {
+        store(collection, Collections.singletonList(document));
+    }
+
+    private void store(String collection, List<Document> documents) {
         try {
-            Document sampleQuery = new Document("$sample", new Document("size", count));
-            return db.aggregateAndDelete(WORK_QUEUE_COLLECTION, sampleQuery)
-                .stream()
-                .map(doc -> doc.getString(WORK_QUEUE_URL_KEY))
-                .collect(Collectors.toList());
-        } catch (Exception e) {
-            logger.error(e.toString(), e);
-            return null;
+            db.put(collection, documents);
+        } catch (MongoBulkWriteException e) {
+            logger.debug("ignoring duplicate key");
         }
     }
 }

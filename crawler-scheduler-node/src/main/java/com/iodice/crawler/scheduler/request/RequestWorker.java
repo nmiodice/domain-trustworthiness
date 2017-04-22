@@ -8,17 +8,20 @@ import com.iodice.crawler.scheduler.threads.Looper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.List;
 
 public class RequestWorker extends Looper {
     private static final Logger logger = LoggerFactory.getLogger(RequestWorker.class);
     private static final int MAX_REQUESTS_PER_MESSAGE = Config.getInt("sqs.request.max_job_per_message");
 
-    private RequestQueueAdaptor requestQueue = new RequestQueueAdaptor();
-    private PersistenceAdaptor persistence = new PersistenceAdaptor();
+    private RequestQueueAdaptor requestQueue;
+    private PersistenceAdaptor persistence;
 
-    RequestWorker() {
+    RequestWorker(PersistenceAdaptor persistence, RequestQueueAdaptor requestQueue) {
         super();
+        this.persistence = persistence;
+        this.requestQueue = requestQueue;
     }
 
     @Override
@@ -30,6 +33,10 @@ public class RequestWorker extends Looper {
                 .build());
             logger.info(String.format("request worker %d submitted %d urls", threadID, nextRequestURLs.size()));
         }
-        Thread.sleep(Config.getInt("worker.request.time_between_requests"));
+    }
+
+    @Override
+    public long getTimeBetweenLoopsInMS() {
+        return Config.getInt("worker.request.time_between_requests");
     }
 }

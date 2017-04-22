@@ -2,6 +2,7 @@ package com.iodice.crawler.scheduler.response.handlers;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class FilterSeenHandler implements ResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(FilterSeenHandler.class);
 
-    private PersistenceAdaptor persistence = new PersistenceAdaptor();
+    private PersistenceAdaptor persistence;
 
     @Override
     public WorkResponse handle(WorkResponse response) {
