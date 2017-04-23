@@ -91,8 +91,9 @@ public class PersistenceAdaptor {
 
     public List<String> getNexQueuedDomains(int count) {
         try {
-            Document[] queries = new Document[] { domainQueueSortQuery(), domainQueueGroupQuery(),
-                domainQueueSampleQuery(count) };
+            Document[] queries = new Document[] {
+                domainQueueSortQuery(), domainQueueGroupQuery(), domainQueueSampleQuery(count)
+            };
             return db.aggregateAndDelete(WORK_QUEUE_COLLECTION, queries)
                 .stream()
                 .map(doc -> doc.getString(WORK_QUEUE_URL_KEY))

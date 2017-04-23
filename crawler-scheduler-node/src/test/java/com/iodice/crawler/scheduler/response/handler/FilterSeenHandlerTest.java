@@ -26,7 +26,8 @@ public class FilterSeenHandlerTest extends HandlerTestBase {
             .stream()
             .collect(Collectors.toMap(Function.identity(), x -> false));
 
-        doReturn(allSeen).when(persistenceMock).seenURLS(any());
+        doReturn(allSeen).when(persistenceMock)
+            .seenURLS(any());
     }
 
     @Override
@@ -36,17 +37,21 @@ public class FilterSeenHandlerTest extends HandlerTestBase {
 
     @Test
     public void handle_shouldFilterURLsIfSeen() {
-        doReturn(allSeen).when(persistenceMock).seenURLS(any());
+        doReturn(allSeen).when(persistenceMock)
+            .seenURLS(any());
         WorkResponse afterHandle = handler.handle(validWorkResponse);
 
-        assertTrue(afterHandle.getDestinations().isEmpty());
+        assertTrue(afterHandle.getDestinations()
+            .isEmpty());
     }
 
     @Test
     public void handle_shouldNotFilterURLsIfNeverSeen() {
-        doReturn(noneSeen).when(persistenceMock).seenURLS(any());
+        doReturn(noneSeen).when(persistenceMock)
+            .seenURLS(any());
         WorkResponse afterHandle = handler.handle(validWorkResponse);
 
-        assertTrue(afterHandle.getDestinations().size() == 2);
+        assertTrue(afterHandle.getDestinations()
+            .size() == 2);
     }
 }

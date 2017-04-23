@@ -1,6 +1,7 @@
 package com.iodice.crawler.scheduler.utils;
 
 import io.mola.galimatias.URL;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,6 +9,8 @@ public class URLFacade {
     private static final Logger logger = LoggerFactory.getLogger(URLFacade.class);
 
     public static String toDomain(String url) {
+        Validate.notBlank(url);
+
         try {
             return URL.parse(url)
                 .host()

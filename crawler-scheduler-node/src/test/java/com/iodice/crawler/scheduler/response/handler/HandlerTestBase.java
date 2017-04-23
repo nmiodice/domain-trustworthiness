@@ -15,6 +15,10 @@ public abstract class HandlerTestBase {
         .source("http://www.google.com")
         .destinations(Arrays.asList("http://www.cnn.com", "http://www.twitter.com"))
         .build();
+    WorkResponse emptyDestinationsResponse = WorkResponse.builder()
+        .source("http://www.google.com")
+        .destinations(Collections.emptyList())
+        .build();
     private WorkResponse emptySourceResponse = WorkResponse.builder()
         .source("")
         .destinations(Arrays.asList("http://www.cnn.com", "http://www.twitter.com"))
@@ -22,10 +26,6 @@ public abstract class HandlerTestBase {
     private WorkResponse nullSourceResponse = WorkResponse.builder()
         .source(null)
         .destinations(Arrays.asList("http://www.cnn.com", "http://www.twitter.com"))
-        .build();
-    WorkResponse emptyDestinationsResponse = WorkResponse.builder()
-        .source("http://www.google.com")
-        .destinations(Collections.emptyList())
         .build();
     private WorkResponse nullDestinationsResponse = WorkResponse.builder()
         .source("http://www.google.com")
