@@ -2,7 +2,7 @@ package com.iodice.crawler.scheduler;
 
 import com.iodice.config.Config;
 import com.iodice.crawler.scheduler.entity.WorkResponse;
-import com.iodice.crawler.scheduler.response.handlers.ResponseHandler;
+import com.iodice.crawler.scheduler.response.handler.ResponseHandler;
 import com.iodice.sqs.simplequeue.QueueWriter;
 
 public class WorkDispatchHandler implements ResponseHandler {

@@ -1,8 +1,7 @@
-package com.iodice.crawler.scheduler.response;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
-import com.iodice.crawler.scheduler.response.handlers.ResponseHandler;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -24,7 +23,7 @@ public abstract class HandlerTestBase {
         .source(null)
         .destinations(Arrays.asList("http://www.cnn.com", "http://www.twitter.com"))
         .build();
-    protected WorkResponse emptyDestinationsResponse = WorkResponse.builder()
+    WorkResponse emptyDestinationsResponse = WorkResponse.builder()
         .source("http://www.google.com")
         .destinations(Collections.emptyList())
         .build();

@@ -1,11 +1,9 @@
-package com.iodice.crawler.scheduler.response.handlers;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
-import com.iodice.crawler.scheduler.response.HandlerTestBase;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;

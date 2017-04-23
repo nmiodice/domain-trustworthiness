@@ -1,11 +1,11 @@
-package com.iodice.crawler.scheduler.response.handlers;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class URLGraphStorageHandler extends ValidatedHandler {
+class URLGraphStorageHandler extends ValidatedHandler {
     private PersistenceAdaptor persistence;
 
     @Override

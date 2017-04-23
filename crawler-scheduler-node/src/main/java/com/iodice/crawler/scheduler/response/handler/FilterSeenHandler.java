@@ -1,4 +1,4 @@
-package com.iodice.crawler.scheduler.response.handlers;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class FilterSeenHandler extends ValidatedHandler {
+class FilterSeenHandler extends ValidatedHandler {
     private static final Logger logger = LoggerFactory.getLogger(FilterSeenHandler.class);
 
     private PersistenceAdaptor persistence;

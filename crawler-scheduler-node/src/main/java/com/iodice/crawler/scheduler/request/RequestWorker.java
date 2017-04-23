@@ -4,13 +4,13 @@ import com.iodice.config.Config;
 import com.iodice.crawler.scheduler.entity.WorkRequest;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import com.iodice.crawler.scheduler.queue.RequestQueueAdaptor;
-import com.iodice.crawler.scheduler.threads.Looper;
+import com.iodice.crawler.scheduler.threads.LoopingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class RequestWorker extends Looper {
+public class RequestWorker extends LoopingWorker {
     private static final Logger logger = LoggerFactory.getLogger(RequestWorker.class);
     private static final int MAX_REQUESTS_PER_MESSAGE = Config.getInt("sqs.request.max_job_per_message");
 

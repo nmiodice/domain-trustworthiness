@@ -1,7 +1,6 @@
-package com.iodice.crawler.scheduler.response.handlers;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
-import com.iodice.crawler.scheduler.response.HandlerTestBase;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -28,7 +27,8 @@ public class DomainGraphStorageHandlerTest extends HandlerTestBase {
 
     @Test
     public void handle_shouldPersistNonNullInput() {
-        handler.handle(WorkResponse.builder()
+        // use validatedHandle here so that we can double check that null values are filtered
+        handler.validatedHandle(WorkResponse.builder()
             .source("http://www.audible.com")
             .destinations(Arrays.asList(null, "http://www.twitter.com"))
             .build());

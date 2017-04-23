@@ -6,14 +6,14 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class Looper implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(Looper.class);
+public abstract class LoopingWorker implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(LoopingWorker.class);
 
     private final static AtomicInteger WORKER_ID_COUNTER = new AtomicInteger();
     protected final int threadID;
     private boolean stopped = false;
 
-    public Looper() {
+    public LoopingWorker() {
         threadID = WORKER_ID_COUNTER.incrementAndGet();
     }
 

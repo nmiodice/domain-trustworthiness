@@ -1,6 +1,5 @@
-package com.iodice.crawler.scheduler.response;
+package com.iodice.crawler.scheduler.response.handler;
 
-import com.iodice.crawler.scheduler.response.handlers.ResponseHandler;
 import org.junit.Before;
 import org.junit.Test;
 

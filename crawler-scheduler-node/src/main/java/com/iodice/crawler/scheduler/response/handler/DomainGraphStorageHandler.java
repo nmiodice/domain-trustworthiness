@@ -1,4 +1,4 @@
-package com.iodice.crawler.scheduler.response.handlers;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class DomainGraphStorageHandler extends ValidatedHandler {
+class DomainGraphStorageHandler extends ValidatedHandler {
     private static final Logger logger = LoggerFactory.getLogger(DomainGraphStorageHandler.class);
 
     private PersistenceAdaptor persistence;

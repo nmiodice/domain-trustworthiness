@@ -1,28 +1,25 @@
-package com.iodice.crawler.scheduler.response;
+package com.iodice.crawler.scheduler.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
-import com.iodice.crawler.scheduler.response.handlers.ResponseHandler;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Singular;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @Builder
-class ResponseHandlerPipeline implements ResponseHandler {
+@AllArgsConstructor
+public class ResponseHandlerPipeline extends ValidatedHandler {
     private static final Logger logger = LoggerFactory.getLogger(ResponseHandlerPipeline.class);
 
     @Singular
+    @Getter
     private List<ResponseHandler> handlers;
 
-    public WorkResponse handle(WorkResponse response) {
-        Validate.notNull(response);
-        Validate.notEmpty(response.getSource());
-        Validate.notEmpty(response.getDestinations());
-        Validate.noNullElements(response.getDestinations());
-
+    public WorkResponse validatedHandle(WorkResponse response) {
         logger.info(String.format("handling URL='%s' with %d destinations", response.getSource(),
             response.getDestinations()
                 .size()));
