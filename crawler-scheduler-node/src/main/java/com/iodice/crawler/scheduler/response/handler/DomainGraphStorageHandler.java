@@ -11,6 +11,10 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * stores a graph with nodes like:
+ *  domain -> [domain]
+ */
 @AllArgsConstructor
 class DomainGraphStorageHandler extends ValidatedHandler {
     private static final Logger logger = LoggerFactory.getLogger(DomainGraphStorageHandler.class);

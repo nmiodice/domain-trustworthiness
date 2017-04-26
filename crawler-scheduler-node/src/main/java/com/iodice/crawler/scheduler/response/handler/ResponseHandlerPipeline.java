@@ -10,6 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+/**
+ * A handler that dispatches work to other handlers in a chain. The pipeline will exit early if there is no more work
+ * to do, to avoid sending empty work to subsequent handlers in the chain
+ */
 @Builder
 @AllArgsConstructor
 public class ResponseHandlerPipeline extends ValidatedHandler {

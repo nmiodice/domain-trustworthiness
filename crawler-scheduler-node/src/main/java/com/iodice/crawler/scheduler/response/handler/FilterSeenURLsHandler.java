@@ -10,19 +10,39 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * If the source has been seen, the whole response is filtered. Any destinations that have been seen will removed
+ * from the returned response
+ */
 @AllArgsConstructor
-class FilterSeenHandler extends ValidatedHandler {
-    private static final Logger logger = LoggerFactory.getLogger(FilterSeenHandler.class);
+class FilterSeenURLsHandler extends ValidatedHandler {
+    private static final Logger logger = LoggerFactory.getLogger(FilterSeenURLsHandler.class);
 
     private PersistenceAdaptor persistence;
 
     @Override
     public WorkResponse validatedHandle(WorkResponse response) {
-        if (persistence.seenURL(response.getSource())) {
+        if (seenSource(response)) {
             logger.warn(String.format("URL '%s' was seen before", response.getSource()));
             return null;
         }
 
+        Collection<String> unvisitedDestinations = filterVisitedDestinations(response);
+        if (unvisitedDestinations.isEmpty()) {
+            return null;
+        } else {
+            return WorkResponse.builder()
+                .source(response.getSource())
+                .destinations(unvisitedDestinations)
+                .build();
+        }
+    }
+
+    private boolean seenSource(WorkResponse response) {
+        return persistence.seenURL(response.getSource());
+    }
+
+    private Collection<String> filterVisitedDestinations(WorkResponse response) {
         Collection<String> all = response.getDestinations();
         Map<String, Boolean> isSeen = persistence.seenURLS(all);
         Collection<String> unseen = response.getDestinations()
@@ -32,10 +52,6 @@ class FilterSeenHandler extends ValidatedHandler {
 
         int filteredCount = all.size() - unseen.size();
         logger.info(String.format("filtered %d destinations from '%s'", filteredCount, response.getSource()));
-
-        return WorkResponse.builder()
-            .source(response.getSource())
-            .destinations(unseen)
-            .build();
+        return unseen;
     }
 }
