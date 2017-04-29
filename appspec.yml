@@ -1,0 +1,9 @@
+version: 0.0
+os: linux
+hooks:
+  BeforeInstall:
+    - location: code-deploy/pre-install.sh
+  AfterInstall:
+    - location: code-deploy/install.sh
+  ApplicationStart:
+    - location: code-deploy/post-install.sh
