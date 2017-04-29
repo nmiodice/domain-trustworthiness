@@ -4,6 +4,7 @@ import com.iodice.crawler.scheduler.utils.URLFacade;
 import com.mongodb.BasicDBList;
 import com.mongodb.MongoBulkWriteException;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class PersistenceAdaptor {
     private static final Logger logger = LoggerFactory.getLogger(PersistenceAdaptor.class);
@@ -30,16 +33,18 @@ public class PersistenceAdaptor {
     private static final String WORK_QUEUE_URL_KEY = "url";
     private static final String WORK_QUEUE_DATE_KEY = "time";
 
+    private static final String DOMAIN_SEEN_COUNT_COLLECTION = "DomainCount";
+    private static final String DOMAIN_SEEN_ID_KEY = "_id";
+    private static final String DOMAIN_SEEN_COUNT_KEY = "seenCount";
+
+
     private final DBFacade db;
 
     public PersistenceAdaptor() {
         this(new DBFacade());
     }
 
-    /**
-     * should only be used for testing
-     */
-    PersistenceAdaptor(DBFacade db) {
+    private PersistenceAdaptor(DBFacade db) {
         this.db = db;
         initDB();
     }
@@ -102,6 +107,21 @@ public class PersistenceAdaptor {
             logger.error(e.toString(), e);
             return null;
         }
+    }
+
+    public void incrementDomainSeenCount(String domain) {
+        Bson filter = eq(DOMAIN_SEEN_ID_KEY, domain);
+        Document update = new Document("$inc", new Document(DOMAIN_SEEN_COUNT_KEY, 1));
+        db.update(DOMAIN_SEEN_COUNT_COLLECTION, filter, update);
+    }
+
+    public int getDomainSeenCount(String domain) {
+        List<Document> results = db.get(DOMAIN_SEEN_COUNT_COLLECTION, new Document(DOMAIN_SEEN_ID_KEY, domain));
+        if (results.isEmpty()) {
+            return 0;
+        }
+
+        return results.get(0).getInteger(DOMAIN_SEEN_COUNT_KEY);
     }
 
     private Document domainQueueSortQuery() {

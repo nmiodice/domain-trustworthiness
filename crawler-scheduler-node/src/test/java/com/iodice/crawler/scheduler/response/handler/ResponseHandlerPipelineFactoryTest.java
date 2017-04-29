@@ -1,5 +1,6 @@
 package com.iodice.crawler.scheduler.response.handler;
 
+import com.iodice.crawler.scheduler.ConfiguredTestBase;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class ResponseHandlerPipelineFactoryTest {
+public class ResponseHandlerPipelineFactoryTest extends ConfiguredTestBase {
     private static final List<Class<? extends ResponseHandler>> EXPECTED_PIPELINE_HANDLER_CLASSES;
     private ResponseHandlerPipeline pipeline = ResponseHandlerPipelineFactory.defaultPipeline(
         mock(PersistenceAdaptor.class));
@@ -20,6 +21,7 @@ public class ResponseHandlerPipelineFactoryTest {
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(FilterSeenURLsHandler.class);
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(URLGraphStorageHandler.class);
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(DomainGraphStorageHandler.class);
+        EXPECTED_PIPELINE_HANDLER_CLASSES.add(DomainCountStorageHandler.class);
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(WorkQueueStorageHandler.class);
     }
 

@@ -8,3 +8,5 @@ worker.request.time_between_requests = 3000
 
 worker.response.worker_count = 10
 worker.response.time_between_requests = 500
+
+filters.max_domain_seen_count = 1

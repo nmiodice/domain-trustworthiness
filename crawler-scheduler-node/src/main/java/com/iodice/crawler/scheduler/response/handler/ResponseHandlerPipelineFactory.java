@@ -12,6 +12,7 @@ public class ResponseHandlerPipelineFactory {
             .handler(new FilterSeenURLsHandler(persistence))
             .handler(new URLGraphStorageHandler(persistence))
             .handler(new DomainGraphStorageHandler(persistence))
+            .handler(new DomainCountStorageHandler(persistence))
             .handler(new WorkQueueStorageHandler(persistence))
             .build();
     }

@@ -1,4 +1,6 @@
 package com.iodice.crawler.scheduler.request;
 
-public class RequestWorkerTest {
+import com.iodice.crawler.scheduler.ConfiguredTestBase;
+
+public class RequestWorkerTest extends ConfiguredTestBase {
 }

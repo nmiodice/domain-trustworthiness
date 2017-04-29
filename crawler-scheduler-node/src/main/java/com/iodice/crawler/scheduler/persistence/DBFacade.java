@@ -6,7 +6,10 @@ import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.UpdateOptions;
+import org.bson.BSON;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.mongodb.client.model.Filters.eq;
 
 class DBFacade {
     private static final Logger logger = LoggerFactory.getLogger(DBFacade.class);
@@ -40,6 +45,10 @@ class DBFacade {
 
     void put(String collection, List<Document> items) {
         getCollection(collection).insertMany(items);
+    }
+
+    void update(String collection, Bson filter, Document update) {
+        getCollection(collection).updateOne(filter, update, new UpdateOptions().upsert(true));
     }
 
     List<Document> get(String collection, Document query) {

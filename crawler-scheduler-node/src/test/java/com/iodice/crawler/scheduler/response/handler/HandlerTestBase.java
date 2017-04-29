@@ -1,5 +1,6 @@
 package com.iodice.crawler.scheduler.response.handler;
 
+import com.iodice.crawler.scheduler.ConfiguredTestBase;
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import org.junit.Test;
@@ -9,9 +10,9 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.mock;
 
-public abstract class HandlerTestBase {
-    protected PersistenceAdaptor persistenceMock = mock(PersistenceAdaptor.class);
-    protected WorkResponse validWorkResponse = WorkResponse.builder()
+public abstract class HandlerTestBase extends ConfiguredTestBase {
+    PersistenceAdaptor persistenceMock = mock(PersistenceAdaptor.class);
+    WorkResponse validWorkResponse = WorkResponse.builder()
         .source("http://www.google.com")
         .destinations(Arrays.asList("http://www.cnn.com", "http://www.twitter.com"))
         .build();

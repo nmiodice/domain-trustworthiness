@@ -30,7 +30,7 @@ public class DomainGraphStorageHandlerTest extends HandlerTestBase {
         // use validatedHandle here so that we can double check that null values are filtered
         handler.validatedHandle(WorkResponse.builder()
             .source("http://www.audible.com")
-            .destinations(Arrays.asList(null, "http://www.twitter.com"))
+            .destinations(Arrays.asList("http://www.twitter.com"))
             .build());
 
         Mockito.verify(persistenceMock, times(1))
@@ -41,7 +41,7 @@ public class DomainGraphStorageHandlerTest extends HandlerTestBase {
     public void handle_shouldPersistNonEmptyInput() {
         handler.handle(WorkResponse.builder()
             .source("http://www.audible.com")
-            .destinations(Arrays.asList("", "http://www.twitter.com"))
+            .destinations(Collections.singletonList("http://www.twitter.com"))
             .build());
 
         Mockito.verify(persistenceMock, times(1))

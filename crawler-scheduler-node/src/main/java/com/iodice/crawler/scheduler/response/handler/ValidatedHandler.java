@@ -17,10 +17,13 @@ abstract class ValidatedHandler implements ResponseHandler {
     @Override
     public WorkResponse handle(WorkResponse response) {
         Validate.notNull(response);
-        Validate.notEmpty(response.getSource());
+        Validate.notBlank(response.getSource());
         Validate.notNull(response.getDestinations());
         Validate.notEmpty(response.getDestinations());
-        Validate.noNullElements(response.getDestinations());
+
+        for (String s : response.getDestinations()) {
+            Validate.notBlank(s);
+        }
         return validatedHandle(response);
     }
 }
