@@ -8,7 +8,7 @@ COL_GREEN=$ESC_SEQ"32;01m"
 MVN_INSTALL_CMD="mvn -T 1C install:install-file"
 
 
-BUILD_DIR="$PWD/build/"
+BUILD_DIR="$HOME/build/"
 
 function runWithSuccessOrFail() {
     printf "$2 ... "

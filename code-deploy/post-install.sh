@@ -6,7 +6,7 @@ function startAsync() {
 
 if [ "$APPLICATION_NAME" == "CrawlerRequester" ]
 then
-    java -jar build/crawler-worker-node-1.0-SNAPSHOT-jar-with-dependencies.jar
+    java -jar $HOME/build/crawler-worker-node-1.0-SNAPSHOT-jar-with-dependencies.jar
 else
-    java -jar build/crawler-scheduler-node-1.0-SNAPSHOT-jar-with-dependencies.jar
+    java -jar $HOME/build/crawler-scheduler-node-1.0-SNAPSHOT-jar-with-dependencies.jar
 fi
