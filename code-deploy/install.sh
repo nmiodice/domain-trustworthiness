@@ -7,6 +7,15 @@ COL_GREEN=$ESC_SEQ"32;01m"
 
 MVN_INSTALL_CMD="mvn -T 1C install:install-file"
 
+# gets the path of this script. useful for traversing directories from this script
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd`
+popd > /dev/null
+
+echo "-- was at $PWD"
+echo "-- script is at $SCRIPTPATH"
+cd $SCRIPTPATH/..
+echo "-- now at $PWD"
 
 BUILD_DIR="$HOME/build/"
 
