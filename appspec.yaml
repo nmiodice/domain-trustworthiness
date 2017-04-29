@@ -3,7 +3,9 @@ os: linux
 hooks:
   BeforeInstall:
     - location: code-deploy/pre-install.sh
+    - runas: root
   AfterInstall:
     - location: code-deploy/install.sh
+    - runas: root
   ApplicationStart:
     - location: code-deploy/post-install.sh
