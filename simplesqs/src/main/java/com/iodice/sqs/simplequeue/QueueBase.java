@@ -1,15 +1,17 @@
 package com.iodice.sqs.simplequeue;
 
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.SDKGlobalConfiguration;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
+
 
 class QueueBase {
     final AmazonSQS sqsClient;
     final String queueUrl;
 
     QueueBase(String queueURL) {
-        sqsClient = new AmazonSQSClient(new ProfileCredentialsProvider().getCredentials());
+        System.out.println(SDKGlobalConfiguration.class.getProtectionDomain().getCodeSource().getLocation());
+        sqsClient = AmazonSQSClientBuilder.defaultClient();
         this.queueUrl = queueURL;
     }
 }

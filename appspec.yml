@@ -1,9 +1,11 @@
 version: 0.0
 os: linux
 hooks:
+  ApplicationStop:
+    - location: code-deploy/stop-java.sh
+      runas: root
   BeforeInstall:
-    - location: code-deploy/pre-install.sh
-  AfterInstall:
-    - location: code-deploy/install.sh
+    - location: code-deploy/fix-java.sh
+      runas: root
   ApplicationStart:
-    - location: code-deploy/post-install.sh
+    - location: code-deploy/run.sh

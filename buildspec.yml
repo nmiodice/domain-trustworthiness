@@ -1,0 +1,19 @@
+version: 0.1
+
+phases:
+  build:
+    commands:
+      - echo "assembly started on `date`"
+      - mvn -T 1C assembly:assembly
+      - echo "assembly finished on `date`"
+  post_build:
+    commands:
+      - echo "post-build started on `date`"
+      - echo gathering build artifacts
+      - mv */target/*jar-with-dependencies* target/
+      - echo "post-build started on `date`"
+artifacts:
+  files:
+    - target/*
+    - appspec.yml
+    - code-deploy/*

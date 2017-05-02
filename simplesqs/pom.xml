@@ -4,6 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.iodice</groupId>
+    <artifactId>master</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+
   <groupId>com.iodice.sqs</groupId>
   <artifactId>simplesqs</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -35,8 +42,15 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-sqs</artifactId>
-      <version>1.11.97</version>
+      <version>1.11.123</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-core</artifactId>
+      <version>1.11.123</version>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
