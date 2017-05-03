@@ -1,2 +1,3 @@
 sqs.request.queue = https://sqs.us-east-1.amazonaws.com/217363501860/CRAWLER_REQUEST_QUEUE
 sqs.response.queue = https://sqs.us-east-1.amazonaws.com/217363501860/CRAWLER_RESPONSE_QUEUE
+sqs.response.cache_message_limit = 50

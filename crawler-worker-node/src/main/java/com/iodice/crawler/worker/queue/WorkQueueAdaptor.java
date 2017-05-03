@@ -4,76 +4,96 @@ import com.iodice.config.Config;
 import com.iodice.sqs.simplequeue.QueueException;
 import com.iodice.sqs.simplequeue.QueueReader;
 import com.iodice.sqs.simplequeue.QueueWriter;
-import edu.uci.ics.crawler4j.frontier.Frontier;
-import edu.uci.ics.crawler4j.url.WebURL;
-import org.apache.commons.lang.Validate;
+import lombok.SneakyThrows;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-public class WorkQueueAdaptor implements Frontier {
-    private static final String SOURCE_KEY = "source";
-    private static final String DESTINATION_KEY = "destination";
+public class WorkQueueAdaptor {
+    private static final Logger logger = LoggerFactory.getLogger(WorkQueueAdaptor.class);
+    private static final String BATCH_PAYLOAD_KEY = "payload";
+
     private QueueReader incoming;
     private QueueWriter outgoing;
 
-    public WorkQueueAdaptor() {
+    private LinkedBlockingQueue<JSONObject> itemsToSend;
+
+    WorkQueueAdaptor() {
         incoming = new QueueReader(Config.getString("sqs.request.queue"));
         outgoing = new QueueWriter(Config.getString("sqs.response.queue"));
+        System.out.println("fuck: " + Config.getInt("sqs.response.cache_message_limit"));
+        itemsToSend = new LinkedBlockingQueue<>(Config.getInt("sqs.response.cache_message_limit"));
+
+        ExecutorService threadManager = Executors.newFixedThreadPool(1);
+        threadManager.submit(new WorkQueueMessageBatchJob());
     }
 
-    @Override
-    public List<WebURL> getNextURLs() {
-        try {
-            String message = incoming.getMessage();
-            JSONObject json = new JSONObject(message);
-            return json.getJSONArray("urls")
-                .toList()
-                .stream()
-                .map(Object::toString)
-                .map(WebURL::new)
-                .collect(Collectors.toList());
-        } catch (QueueException e) {
-            throw new RuntimeException(e);
+    JSONObject dequeue() throws QueueException {
+        String message = incoming.getMessage();
+        return new JSONObject(message);
+    }
+
+    @SneakyThrows
+    void enqueue(JSONObject item) {
+        itemsToSend.offer(item, 60, TimeUnit.SECONDS);
+    }
+
+    class WorkQueueMessageBatchJob implements Runnable {
+        // maximum SQS message length, imposed by Amazon
+        private static final long MAX_LENGTH = 256 * 1024;
+        // how many characters to allow for non-queue item json content
+        private static final long LENGTH_BUFFER = 10 * 1024;
+        private static final long MAX_ITEMS_LENGTH = MAX_LENGTH - LENGTH_BUFFER;
+
+        private boolean isRunning = true;
+        private List<JSONObject> batched = new ArrayList<>();
+        private long currentLength = 0;
+
+        @Override
+        public void run() {
+            while (isRunning()) {
+                try {
+                    logger.info("starting to poll");
+                    JSONObject item = itemsToSend.poll(10, TimeUnit.SECONDS);
+                    logger.info("stopped polling");
+                    logger.info(""+itemsToSend.size());
+                    long itemLength = item.toString().length();
+
+                    if (currentLength + itemLength < MAX_ITEMS_LENGTH) {
+                        addToBatch(item, itemLength);
+                    } else {
+                        sendAndReset();
+                        addToBatch(item, itemLength);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
         }
 
-    }
-
-    @Override
-    public void scheduleAll(Collection<WebURL> destinations, WebURL source) {
-        Validate.notNull(destinations, "cannot schedule null URL list");
-        Validate.notNull(source, "cannot schedule without a source");
-        Validate.notEmpty(source.getUrl(), "cannot schedule with empty source URL");
-
-        if (destinations.size() == 0) {
-            return;
+        private void addToBatch(JSONObject item, long itemLength) {
+            batched.add(item);
+            currentLength += itemLength;
         }
 
-        JSONObject json = new JSONObject();
-        json.put(SOURCE_KEY, source.getUrl());
+        private void sendAndReset() {
+            logger.info("purging queue with length = " + currentLength);
+            JSONObject batchJSON = new JSONObject();
+            batchJSON.put(BATCH_PAYLOAD_KEY, batched);
 
-        List<String> destinationUrls = destinations.stream()
-            .map(WebURL::getUrl)
-            .collect(Collectors.toList());
-        json.put(DESTINATION_KEY, destinationUrls);
-        outgoing.send(json.toString());
-    }
+            outgoing.send(batchJSON.toString());
+            batched.clear();
+            currentLength = 0;
+        }
 
-    @Override
-    public void schedule(WebURL destination, WebURL source) {
-        scheduleAll(Collections.singletonList(destination), source);
-    }
-
-    @Override
-    public boolean isShutdown() {
-        return false;
-    }
-
-    @Override
-    public void shutdown() {
-
+        boolean isRunning() {
+            return isRunning;
+        }
     }
 }

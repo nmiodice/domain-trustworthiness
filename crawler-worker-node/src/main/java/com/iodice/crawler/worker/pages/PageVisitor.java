@@ -37,7 +37,7 @@ public class PageVisitor extends WebCrawler {
                 .getOutgoingUrls()
                 .stream()
                 .filter(webUrl -> shouldVisitUrl(webUrl.getUrl()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
             frontier.scheduleAll(outgoing, url);
             logger.info(String.format("%d URLs scheduled from %s ", outgoing.size(),

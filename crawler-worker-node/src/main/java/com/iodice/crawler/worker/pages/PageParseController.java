@@ -1,5 +1,6 @@
 package com.iodice.crawler.worker.pages;
 
+import com.iodice.crawler.worker.queue.FrontierAdaptor;
 import com.iodice.crawler.worker.queue.WorkQueueAdaptor;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -18,7 +19,7 @@ public class PageParseController {
         PageFetcher pageFetcher = new PageFetcher(config);
         RobotsTxtConfig robotsTxtConfig = new RobotsTxtConfig();
         RobotsTxtServer robotsTxtServer = new RobotsTxtServer(robotsTxtConfig, pageFetcher);
-        CrawlController controller = new CrawlController(config, pageFetcher, robotsTxtServer, new WorkQueueAdaptor());
+        CrawlController controller = new CrawlController(config, pageFetcher, robotsTxtServer, new FrontierAdaptor());
 
         controller.start(PageVisitor.class, CRAWLER_COUNT);
     }
