@@ -4,14 +4,16 @@ import com.iodice.config.Config;
 import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import com.iodice.crawler.scheduler.queue.ResponseQueueAdaptor;
-import com.iodice.crawler.scheduler.response.handler.ResponseHandlerPipeline;
+import com.iodice.crawler.scheduler.response.handler.ResponseHandler;
 import com.iodice.crawler.scheduler.response.handler.ResponseHandlerPipelineFactory;
 import com.iodice.crawler.scheduler.threads.LoopingWorker;
+
+import java.util.List;
 
 class ResponseWorker extends LoopingWorker {
 
     private ResponseQueueAdaptor responseQueue;
-    private ResponseHandlerPipeline responseHandler;
+    private ResponseHandler responseHandler;
 
     ResponseWorker() {
         super();
@@ -21,8 +23,10 @@ class ResponseWorker extends LoopingWorker {
 
     @Override
     public void doOneWorkLoop() throws Exception {
-        WorkResponse response = responseQueue.nextResponse();
-        responseHandler.handle(response);
+        List<WorkResponse> responses = responseQueue.nextResponseBatch();
+        for (WorkResponse response : responses) {
+            responseHandler.handle(response);
+        }
     }
 
     @Override
