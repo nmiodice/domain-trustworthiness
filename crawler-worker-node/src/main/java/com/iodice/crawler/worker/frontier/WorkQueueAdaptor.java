@@ -1,4 +1,4 @@
-package com.iodice.crawler.worker.queue;
+package com.iodice.crawler.worker.frontier;
 
 import com.iodice.config.Config;
 import com.iodice.sqs.simplequeue.QueueException;
@@ -48,7 +48,7 @@ public class WorkQueueAdaptor {
     class WorkQueueMessageBatchJob implements Runnable {
         // maximum SQS message length, imposed by Amazon
         private static final long MAX_LENGTH = 256 * 1024;
-        // how many characters to allow for non-queue item json content
+        // how many characters to allow for non-frontier item json content
         private static final long LENGTH_BUFFER = 10 * 1024;
         private static final long MAX_ITEMS_LENGTH = MAX_LENGTH - LENGTH_BUFFER;
 
@@ -60,20 +60,25 @@ public class WorkQueueAdaptor {
         public void run() {
             while (isRunning()) {
                 try {
-                    logger.info("starting to poll");
                     JSONObject item = itemsToSend.poll(10, TimeUnit.SECONDS);
-                    logger.info("stopped polling");
-                    logger.info(""+itemsToSend.size());
-                    long itemLength = item.toString().length();
-
-                    if (currentLength + itemLength < MAX_ITEMS_LENGTH) {
-                        addToBatch(item, itemLength);
+                    if (item == null) {
+                        if (currentLength > 0)
+                            sendAndReset();
                     } else {
-                        sendAndReset();
-                        addToBatch(item, itemLength);
+                        addToBatchOrSend(item);
                     }
                 } catch (Exception ignored) {
                 }
+            }
+        }
+
+        private void addToBatchOrSend(JSONObject item) {
+            long itemLength = item.toString().length();
+            if (currentLength + itemLength < MAX_ITEMS_LENGTH) {
+                addToBatch(item, itemLength);
+            } else {
+                sendAndReset();
+                addToBatch(item, itemLength);
             }
         }
 
@@ -83,7 +88,7 @@ public class WorkQueueAdaptor {
         }
 
         private void sendAndReset() {
-            logger.info("purging queue with length = " + currentLength);
+            logger.info("purging frontier with length = " + currentLength);
             JSONObject batchJSON = new JSONObject();
             batchJSON.put(BATCH_PAYLOAD_KEY, batched);
 

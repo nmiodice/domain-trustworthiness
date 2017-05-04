@@ -1,4 +1,4 @@
-package com.iodice.crawler.worker.queue;
+package com.iodice.crawler.worker.frontier;
 
 import com.iodice.sqs.simplequeue.QueueException;
 import edu.uci.ics.crawler4j.frontier.Frontier;

@@ -1,7 +1,6 @@
 package com.iodice.crawler.worker.pages;
 
-import com.iodice.crawler.worker.queue.FrontierAdaptor;
-import com.iodice.crawler.worker.queue.WorkQueueAdaptor;
+import com.iodice.crawler.worker.frontier.FrontierAdaptor;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
