@@ -1,5 +1,6 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import org.junit.Test;
 
 import static org.mockito.Mockito.verify;
@@ -21,7 +22,7 @@ public class URLGraphStorageHandlerTest extends HandlerTestBase {
     }
 
     @Override
-    protected ResponseHandler getHandlerInstance() {
+    protected PayloadHandler getHandlerInstance() {
         return handler;
     }
 }

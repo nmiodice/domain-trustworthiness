@@ -7,7 +7,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.UpdateOptions;
-import org.bson.BSON;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
@@ -20,8 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static com.mongodb.client.model.Filters.eq;
 
 class DBFacade {
     private static final Logger logger = LoggerFactory.getLogger(DBFacade.class);
@@ -74,7 +71,8 @@ class DBFacade {
     }
 
     List<Document> aggregate(String collection, Document... clauses) {
-        AggregateIterable<Document> iterator = getCollection(collection).aggregate(Arrays.asList(clauses));
+        AggregateIterable<Document> iterator = getCollection(collection).aggregate(Arrays.asList(clauses))
+            .allowDiskUse(true);
         return toList(iterator);
     }
 

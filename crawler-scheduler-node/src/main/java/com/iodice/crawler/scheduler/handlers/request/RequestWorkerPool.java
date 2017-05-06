@@ -1,4 +1,4 @@
-package com.iodice.crawler.scheduler.request;
+package com.iodice.crawler.scheduler.handlers.request;
 
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import com.iodice.crawler.scheduler.queue.RequestQueueAdaptor;

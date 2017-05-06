@@ -1,8 +1,8 @@
 package com.iodice.crawler.scheduler;
 
 import com.iodice.config.Config;
-import com.iodice.crawler.scheduler.request.RequestWorkerPool;
-import com.iodice.crawler.scheduler.response.ResponseWorkerPool;
+import com.iodice.crawler.scheduler.handlers.request.RequestWorkerPool;
+import com.iodice.crawler.scheduler.handlers.response.ResponseWorkerPool;
 
 public class Application {
     public static void main(String[] args) {

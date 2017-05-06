@@ -1,4 +1,4 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
 import com.iodice.config.Config;
 import com.iodice.crawler.scheduler.entity.WorkResponse;
@@ -15,25 +15,25 @@ import java.util.stream.Collectors;
  * Stores URLs in a {@link WorkResponse} in domain queues that are eligible for crawling
  */
 @AllArgsConstructor
-class WorkQueueStorageHandler extends ValidatedHandler {
+class WorkQueueStorageHandler extends ValidatedResponseHandler {
     private static final Logger logger = LoggerFactory.getLogger(WorkQueueStorageHandler.class);
-    private final static int MAX_SEEN_COUNT = Config.getInt("filters.max_domain_seen_count");
+    private final static int MAX_SCHEDULED_COUNT = Config.getInt("filters.max_domain_schedule_count");
 
     private PersistenceAdaptor persistence;
 
-
     @Override
     public WorkResponse validatedHandle(WorkResponse response) {
-        Collection<String> validWorkItems = filterHighSeenDomains(response.getDestinations());
-        if (!validWorkItems.isEmpty()) {
-            persistence.enqueueURLS(validWorkItems);
+        Collection<String> toSchedule = pruneMaximallyScheduledURLs(response.getDestinations());
+        if (!toSchedule.isEmpty()) {
+            persistence.enqueueURLS(toSchedule);
+            registerDomainVisit(toSchedule);
         }
         return response;
     }
 
-    private Collection<String> filterHighSeenDomains(Collection<String> urls) {
+    private Collection<String> pruneMaximallyScheduledURLs(Collection<String> urls) {
         return urls.stream()
-            .filter(url -> seenCount(URLFacade.toDomain(url)) < MAX_SEEN_COUNT)
+            .filter(url -> seenCount(URLFacade.toDomain(url)) < MAX_SCHEDULED_COUNT)
             .collect(Collectors.toList());
     }
 
@@ -44,5 +44,12 @@ class WorkQueueStorageHandler extends ValidatedHandler {
             logger.error(String.format("error determining domain count for domain='%s'", domain));
             return 0;
         }
+    }
+
+    private void registerDomainVisit(Collection<String> urls) {
+        urls.stream()
+            .map(URLFacade::toDomain)
+            .collect(Collectors.toSet())
+            .forEach(persistence::incrementDomainSeenCount);
     }
 }

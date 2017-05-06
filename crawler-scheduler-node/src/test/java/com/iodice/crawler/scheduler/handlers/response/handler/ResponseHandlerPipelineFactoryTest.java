@@ -1,6 +1,7 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
 import com.iodice.crawler.scheduler.ConfiguredTestBase;
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import org.junit.Test;
 
@@ -12,25 +13,26 @@ import static junit.framework.TestCase.assertFalse;
 import static org.mockito.Mockito.mock;
 
 public class ResponseHandlerPipelineFactoryTest extends ConfiguredTestBase {
-    private static final List<Class<? extends ResponseHandler>> EXPECTED_PIPELINE_HANDLER_CLASSES;
-    private ResponseHandlerPipeline pipeline = ResponseHandlerPipelineFactory.defaultPipeline(
-        mock(PersistenceAdaptor.class));
+    private static final List<Class<? extends PayloadHandler>> EXPECTED_PIPELINE_HANDLER_CLASSES;
 
     static {
         EXPECTED_PIPELINE_HANDLER_CLASSES = new ArrayList<>();
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(FilterSeenURLsHandler.class);
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(URLGraphStorageHandler.class);
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(DomainGraphStorageHandler.class);
-        EXPECTED_PIPELINE_HANDLER_CLASSES.add(DomainCountStorageHandler.class);
         EXPECTED_PIPELINE_HANDLER_CLASSES.add(WorkQueueStorageHandler.class);
     }
+
+    private ResponseHandlerPipeline pipeline = ResponseHandlerPipelineFactory.defaultPipeline(
+        mock(PersistenceAdaptor.class));
 
     @Test
     public void defaultPipeline_shouldContainProperHandlers() {
         assertFalse(pipeline.getHandlers()
             .stream()
             .anyMatch(handler -> !EXPECTED_PIPELINE_HANDLER_CLASSES.contains(handler.getClass())));
-        assertEquals(EXPECTED_PIPELINE_HANDLER_CLASSES.size(), pipeline.getHandlers().size());
+        assertEquals(EXPECTED_PIPELINE_HANDLER_CLASSES.size(), pipeline.getHandlers()
+            .size());
     }
 
     /**
@@ -43,13 +45,17 @@ public class ResponseHandlerPipelineFactoryTest extends ConfiguredTestBase {
             int expectedOrder = EXPECTED_PIPELINE_HANDLER_CLASSES.indexOf(handlerType);
             int actualOrder = -1;
 
-            for (int i = 0; i < pipeline.getHandlers().size(); i++) {
-                if (pipeline.getHandlers().get(i).getClass().equals(handlerType)) {
+            for (int i = 0; i < pipeline.getHandlers()
+                .size(); i++) {
+                if (pipeline.getHandlers()
+                    .get(i)
+                    .getClass()
+                    .equals(handlerType)) {
                     actualOrder = i;
                 }
             }
 
-            assertEquals("pipeline handlers are out of order", expectedOrder, actualOrder);
+            assertEquals("handlers handlers are out of order", expectedOrder, actualOrder);
         }
     }
 }

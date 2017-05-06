@@ -37,7 +37,6 @@ public class PersistenceAdaptor {
     private static final String DOMAIN_SEEN_ID_KEY = "_id";
     private static final String DOMAIN_SEEN_COUNT_KEY = "seenCount";
 
-
     private final DBFacade db;
 
     public PersistenceAdaptor() {
@@ -97,7 +96,7 @@ public class PersistenceAdaptor {
     public List<String> getNexQueuedDomains(int count) {
         try {
             Document[] queries = new Document[] {
-                domainQueueSortQuery(), domainQueueGroupQuery(), domainQueueSampleQuery(count)
+                domainQueueGroupQuery(), domainQueueSampleQuery(count)
             };
             return db.aggregateAndDelete(WORK_QUEUE_COLLECTION, queries)
                 .stream()
@@ -121,11 +120,8 @@ public class PersistenceAdaptor {
             return 0;
         }
 
-        return results.get(0).getInteger(DOMAIN_SEEN_COUNT_KEY);
-    }
-
-    private Document domainQueueSortQuery() {
-        return new Document("$sort", new Document(WORK_QUEUE_DOMAIN_KEY, 1).append(WORK_QUEUE_DATE_KEY, 1));
+        return results.get(0)
+            .getInteger(DOMAIN_SEEN_COUNT_KEY);
     }
 
     private Document domainQueueGroupQuery() {

@@ -1,4 +1,4 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 
@@ -12,7 +12,6 @@ public class ResponseHandlerPipelineFactory {
             .handler(new FilterSeenURLsHandler(persistence))
             .handler(new URLGraphStorageHandler(persistence))
             .handler(new DomainGraphStorageHandler(persistence))
-            .handler(new DomainCountStorageHandler(persistence))
             .handler(new WorkQueueStorageHandler(persistence))
             .build();
     }

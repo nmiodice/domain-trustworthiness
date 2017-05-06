@@ -1,5 +1,6 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,14 +11,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class ResponseHandlerPipelineTest extends HandlerTestBase {
-    private ResponseHandler firstHandler;
-    private ResponseHandler secondHandler;
+    private PayloadHandler firstHandler;
+    private PayloadHandler secondHandler;
     private ResponseHandlerPipeline pipeline;
 
     @Before
     public void init() {
-        firstHandler = mock(ResponseHandler.class);
-        secondHandler = mock(ResponseHandler.class);
+        firstHandler = mock(PayloadHandler.class);
+        secondHandler = mock(PayloadHandler.class);
         pipeline = ResponseHandlerPipeline.builder()
             .handler(firstHandler)
             .handler(secondHandler)
@@ -61,7 +62,7 @@ public class ResponseHandlerPipelineTest extends HandlerTestBase {
     }
 
     @Override
-    protected ResponseHandler getHandlerInstance() {
+    protected PayloadHandler getHandlerInstance() {
         return pipeline;
     }
 }

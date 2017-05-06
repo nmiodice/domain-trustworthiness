@@ -3,10 +3,10 @@ sqs.request.queue = https://sqs.us-east-1.amazonaws.com/217363501860/CRAWLER_REQ
 sqs.response.queue = https://sqs.us-east-1.amazonaws.com/217363501860/CRAWLER_RESPONSE_QUEUE
 
 
-worker.request.worker_count = 5
-worker.request.time_between_requests = 1000
+worker.request.worker_count = 1
+worker.request.time_between_requests = 100
 
-worker.response.worker_count = 5
-worker.response.time_between_requests = 1000
+worker.response.worker_count = 3
+worker.response.time_between_requests = 0
 
-filters.max_domain_seen_count = 1
+filters.max_domain_schedule_count = 100

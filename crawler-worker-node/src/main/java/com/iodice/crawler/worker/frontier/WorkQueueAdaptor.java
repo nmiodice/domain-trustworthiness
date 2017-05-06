@@ -49,7 +49,7 @@ public class WorkQueueAdaptor {
         // maximum SQS message length, imposed by Amazon
         private static final long MAX_LENGTH = 256 * 1024;
         // how many characters to allow for non-frontier item json content
-        private static final long LENGTH_BUFFER = 10 * 1024;
+        private static final long LENGTH_BUFFER = 4 * 1024;
         private static final long MAX_ITEMS_LENGTH = MAX_LENGTH - LENGTH_BUFFER;
 
         private boolean isRunning = true;

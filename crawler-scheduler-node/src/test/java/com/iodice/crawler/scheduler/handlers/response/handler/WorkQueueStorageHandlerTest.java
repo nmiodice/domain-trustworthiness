@@ -1,5 +1,6 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import com.iodice.crawler.scheduler.utils.URLFacade;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public class WorkQueueStorageHandlerTest extends HandlerTestBase {
     }
 
     @Override
-    protected ResponseHandler getHandlerInstance() {
+    protected PayloadHandler getHandlerInstance() {
         return handler;
     }
 }

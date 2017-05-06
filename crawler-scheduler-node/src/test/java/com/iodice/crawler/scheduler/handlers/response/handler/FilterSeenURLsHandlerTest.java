@@ -1,6 +1,7 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,7 +9,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -33,7 +33,7 @@ public class FilterSeenURLsHandlerTest extends HandlerTestBase {
     }
 
     @Override
-    protected ResponseHandler getHandlerInstance() {
+    protected PayloadHandler getHandlerInstance() {
         return handler;
     }
 

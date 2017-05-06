@@ -1,7 +1,8 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
 import com.iodice.crawler.scheduler.ConfiguredTestBase;
 import com.iodice.crawler.scheduler.entity.WorkResponse;
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import org.junit.Test;
 
@@ -33,7 +34,7 @@ public abstract class HandlerTestBase extends ConfiguredTestBase {
         .destinations(null)
         .build();
 
-    protected abstract ResponseHandler getHandlerInstance();
+    protected abstract PayloadHandler getHandlerInstance();
 
     @Test(expected = NullPointerException.class)
     public void handle_shouldFailWithNullParameter() {

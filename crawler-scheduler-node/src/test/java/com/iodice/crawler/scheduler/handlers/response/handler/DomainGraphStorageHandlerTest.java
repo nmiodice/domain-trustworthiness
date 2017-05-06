@@ -1,6 +1,7 @@
-package com.iodice.crawler.scheduler.response.handler;
+package com.iodice.crawler.scheduler.handlers.response.handler;
 
 import com.iodice.crawler.scheduler.entity.WorkResponse;
+import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -49,7 +50,7 @@ public class DomainGraphStorageHandlerTest extends HandlerTestBase {
     }
 
     @Override
-    protected ResponseHandler getHandlerInstance() {
+    protected PayloadHandler getHandlerInstance() {
         return handler;
     }
 }
