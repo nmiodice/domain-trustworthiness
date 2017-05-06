@@ -9,4 +9,7 @@ worker.request.time_between_requests = 100
 worker.response.worker_count = 3
 worker.response.time_between_requests = 0
 
-filters.max_domain_schedule_count = 100
+filters.max_domain_schedule_count = 200
+
+
+scheduler.seeds = http://www.cnn.com/,https://www.wikipedia.org/
