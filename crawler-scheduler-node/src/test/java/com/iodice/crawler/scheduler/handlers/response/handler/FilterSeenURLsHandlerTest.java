@@ -24,9 +24,12 @@ public class FilterSeenURLsHandlerTest extends HandlerTestBase {
         allSeen = validWorkResponse.getDestinations()
             .stream()
             .collect(Collectors.toMap(Function.identity(), x -> true));
+        allSeen.put(validWorkResponse.getSource(), true);
+
         noneSeen = validWorkResponse.getDestinations()
             .stream()
             .collect(Collectors.toMap(Function.identity(), x -> false));
+        noneSeen.put(validWorkResponse.getSource(), false);
 
         doReturn(allSeen).when(persistenceMock)
             .isInEdgeGraph(any());
