@@ -48,9 +48,54 @@ final class SQL {
             sql += "    SELECT * FROM (SELECT DISTINCT ON (%s) %s FROM %s ORDER BY %s, random()) as tmp\n";
             sql += "order by random() limit %d) returning *;";
 
-            System.out.println(String.format(sql, TABLE_NAME, PK, DOMAIN_COLUMN, PK, TABLE_NAME, DOMAIN_COLUMN,
-                maxToDequeue));
             return String.format(sql, TABLE_NAME, PK, DOMAIN_COLUMN, PK, TABLE_NAME, DOMAIN_COLUMN, maxToDequeue);
+        }
+    }
+
+    static class GraphBase {
+        static final String SOURCE_COLUMN = "source";
+        static final String DESTINATION_COLUMN = "destination";
+
+        static String create(String tableName) {
+            return String.format(
+                "CREATE TABLE IF NOT EXISTS %s (id serial primary key, %s text NOT NULL, %s text NOT NULL);",
+                tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
+        }
+
+        static String insert(String tableName) {
+            return String.format("INSERT INTO %s (%s, %s) VALUES (?, ?);", tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
+        }
+
+        static String containsSource(String tablename) {
+            return String.format("SELECT COUNT(*) FROM %s where %s = ?;", tablename, SOURCE_COLUMN);
+        }
+    }
+
+    static class DomainGraph extends GraphBase {
+        static final String TABLE_NAME = "domain_graph";
+
+        static String create() {
+            return create(TABLE_NAME);
+        }
+
+        static String insert() {
+            return insert(TABLE_NAME);
+        }
+    }
+
+    static class UrlGraph extends GraphBase {
+        static final String TABLE_NAME = "edge_graph";
+
+        static String create() {
+            return create(TABLE_NAME);
+        }
+
+        static String insert() {
+            return insert(TABLE_NAME);
+        }
+
+        static String outgoingEdgeCount() {
+            return containsSource(TABLE_NAME);
         }
     }
 }
