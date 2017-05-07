@@ -29,7 +29,7 @@ public class FilterSeenURLsHandlerTest extends HandlerTestBase {
             .collect(Collectors.toMap(Function.identity(), x -> false));
 
         doReturn(allSeen).when(persistenceMock)
-            .seenURLS(any());
+            .isInEdgeGraph(any());
     }
 
     @Override
@@ -40,14 +40,14 @@ public class FilterSeenURLsHandlerTest extends HandlerTestBase {
     @Test
     public void handle_shouldReturnNullIfAllDestinationsAreSeen() {
         doReturn(allSeen).when(persistenceMock)
-            .seenURLS(any());
+            .isInEdgeGraph(any());
         assertNull(handler.handle(validWorkResponse));
     }
 
     @Test
     public void handle_shouldNotFilterURLsIfNeverSeen() {
         doReturn(noneSeen).when(persistenceMock)
-            .seenURLS(any());
+            .isInEdgeGraph(any());
         WorkResponse afterHandle = handler.handle(validWorkResponse);
 
         assertTrue(afterHandle.getDestinations()

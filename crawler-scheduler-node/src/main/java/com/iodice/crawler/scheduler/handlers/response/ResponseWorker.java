@@ -5,6 +5,7 @@ import com.iodice.crawler.scheduler.entity.WorkResponse;
 import com.iodice.crawler.scheduler.handlers.PayloadHandler;
 import com.iodice.crawler.scheduler.handlers.response.handler.ResponseHandlerPipelineFactory;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
+import com.iodice.crawler.scheduler.persistence.PersistenceAdaptorFactory;
 import com.iodice.crawler.scheduler.queue.ResponseQueueAdaptor;
 import com.iodice.crawler.scheduler.threads.LoopingWorker;
 
@@ -18,7 +19,7 @@ class ResponseWorker extends LoopingWorker {
     ResponseWorker() {
         super();
         responseQueue = new ResponseQueueAdaptor();
-        responseHandler = ResponseHandlerPipelineFactory.defaultPipeline(new PersistenceAdaptor());
+        responseHandler = ResponseHandlerPipelineFactory.defaultPipeline(PersistenceAdaptorFactory.defaultAdaptor());
     }
 
     @Override

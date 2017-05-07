@@ -25,8 +25,7 @@ class WorkQueueStorageHandler extends ValidatedResponseHandler {
     public WorkResponse validatedHandle(WorkResponse response) {
         Collection<String> toSchedule = pruneMaximallyScheduledURLs(response.getDestinations());
         if (!toSchedule.isEmpty()) {
-            persistence.enqueueURLS(toSchedule);
-            registerDomainVisit(toSchedule);
+            persistence.enqueueURLs(toSchedule);
         }
         return response;
     }
@@ -39,17 +38,10 @@ class WorkQueueStorageHandler extends ValidatedResponseHandler {
 
     private int seenCount(String domain) {
         try {
-            return persistence.getDomainSeenCount(domain);
+            return persistence.getDomainScheduledCount(domain);
         } catch (Exception e) {
             logger.error(String.format("error determining domain count for domain='%s'", domain));
             return 0;
         }
-    }
-
-    private void registerDomainVisit(Collection<String> urls) {
-        urls.stream()
-            .map(URLFacade::toDomain)
-            .collect(Collectors.toSet())
-            .forEach(persistence::incrementDomainSeenCount);
     }
 }

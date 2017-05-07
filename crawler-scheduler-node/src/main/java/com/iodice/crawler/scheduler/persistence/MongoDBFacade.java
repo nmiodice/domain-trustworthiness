@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-class DBFacade {
-    private static final Logger logger = LoggerFactory.getLogger(DBFacade.class);
+class MongoDBFacade {
+    private static final Logger logger = LoggerFactory.getLogger(MongoDBFacade.class);
     private static final String DB_HOST = Config.getString("db.meta.host");
     private static final String DB_NAME = Config.getString("db.meta.db_name");
 

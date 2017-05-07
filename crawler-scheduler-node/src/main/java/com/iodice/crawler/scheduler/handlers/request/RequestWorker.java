@@ -27,7 +27,7 @@ public class RequestWorker extends LoopingWorker {
 
     @Override
     public void doOneWorkLoop() throws Exception {
-        List<String> nextRequestURLs = persistence.getNexQueuedDomains(MAX_REQUESTS_PER_MESSAGE);
+        List<String> nextRequestURLs = persistence.dequeueURLs(MAX_REQUESTS_PER_MESSAGE);
         if (!nextRequestURLs.isEmpty()) {
             requestHandler.handle(WorkRequest.builder()
                 .urls(nextRequestURLs)

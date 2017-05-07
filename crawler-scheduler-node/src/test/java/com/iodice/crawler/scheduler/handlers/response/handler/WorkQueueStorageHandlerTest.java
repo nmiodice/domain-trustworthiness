@@ -20,13 +20,13 @@ public class WorkQueueStorageHandlerTest extends HandlerTestBase {
     @Test
     public void handle_shouldEnqueueOnlyLowCountDestinations() {
         doReturn(Integer.MAX_VALUE).when(persistenceMock)
-            .getDomainSeenCount(URLFacade.toDomain("http://www.cnn.com"));
+            .getDomainScheduledCount(URLFacade.toDomain("http://www.cnn.com"));
         doReturn(0).when(persistenceMock)
-            .getDomainSeenCount(URLFacade.toDomain("http://www.twitter.com"));
+            .getDomainScheduledCount(URLFacade.toDomain("http://www.twitter.com"));
 
         handler.handle(validWorkResponse);
 
-        verify(persistenceMock, times(1)).enqueueURLS(Collections.singletonList("http://www.twitter.com"));
+        verify(persistenceMock, times(1)).enqueueURLs(Collections.singletonList("http://www.twitter.com"));
     }
 
     @Override

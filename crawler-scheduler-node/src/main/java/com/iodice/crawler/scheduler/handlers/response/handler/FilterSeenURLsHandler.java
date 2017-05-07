@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -39,12 +40,14 @@ class FilterSeenURLsHandler extends ValidatedResponseHandler {
     }
 
     private boolean seenSource(WorkResponse response) {
-        return persistence.seenURL(response.getSource());
+        String url = response.getSource();
+        return persistence.isInEdgeGraph(Collections.singleton(url))
+            .get(url);
     }
 
     private Collection<String> filterVisitedDestinations(WorkResponse response) {
         Collection<String> all = response.getDestinations();
-        Map<String, Boolean> isSeen = persistence.seenURLS(all);
+        Map<String, Boolean> isSeen = persistence.isInEdgeGraph(all);
         Collection<String> unseen = response.getDestinations()
             .stream()
             .filter(url -> !isSeen.get(url))
