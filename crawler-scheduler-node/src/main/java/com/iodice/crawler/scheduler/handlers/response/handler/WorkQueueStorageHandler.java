@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -31,17 +33,19 @@ class WorkQueueStorageHandler extends ValidatedResponseHandler {
     }
 
     private Collection<String> pruneMaximallyScheduledURLs(Collection<String> urls) {
-        return urls.stream()
-            .filter(url -> seenCount(URLFacade.toDomain(url)) < MAX_SCHEDULED_COUNT)
-            .collect(Collectors.toList());
-    }
+        Collection<String> domains = urls.stream().map(URLFacade::toDomain).filter(Objects::nonNull)
+            .collect(Collectors.toSet());
 
-    private int seenCount(String domain) {
-        try {
-            return persistence.getDomainScheduledCount(domain);
-        } catch (Exception e) {
-            logger.error(String.format("error determining domain count for domain='%s'", domain));
-            return 0;
-        }
+        Map<String, Integer> seenCount = persistence.getDomainScheduledCount(domains);
+
+        return urls.stream().filter(url -> {
+            try {
+                String domain = URLFacade.toDomain(url);
+                return domain != null && seenCount.get(URLFacade.toDomain(url)) < MAX_SCHEDULED_COUNT;
+            } catch (Exception e) {
+                logger.info("");
+                return true;
+            }
+        }).collect(Collectors.toSet());
     }
 }

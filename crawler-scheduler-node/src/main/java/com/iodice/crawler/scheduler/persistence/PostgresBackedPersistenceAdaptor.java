@@ -31,9 +31,9 @@ class PostgresBackedPersistenceAdaptor implements PersistenceAdaptor {
 
             // initialize graph tables
             dbFacade.preparedStatement(SQL.DomainGraph.create()).executeUpdate();
+
             dbFacade.preparedStatement(SQL.UrlGraph.create()).executeUpdate();
-
-
+            dbFacade.preparedStatement(SQL.UrlGraph.createSourceIndex()).executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("error initializing DB: " + e.getMessage(), e);
         }
@@ -70,24 +70,18 @@ class PostgresBackedPersistenceAdaptor implements PersistenceAdaptor {
     public Map<String, Boolean> isInEdgeGraph(Collection<String> urls) {
 
         Map<String, Boolean> seen = new HashMap<>();
-        ResultSet rs;
-
+        PreparedStatement statement = toStatement(SQL.UrlGraph.outgoingEdgeCount(urls.size()));
+        int i = 1;
         for (String url : urls) {
-            try {
-                PreparedStatement statement = toStatement(SQL.UrlGraph.outgoingEdgeCount());
-                statement.setString(1, url);
-                rs = statement.executeQuery();
-
-                // this should always return a row even if the source was not found
-                rs.next();
-                seen.put(url, rs.getInt(1) > 0);
-
-            } catch (Exception e) {
-                logger.error("Unable to determine if edge is in graph: " + e.getMessage(), e);
-                seen.put(url, false);
-            }
+            statement.setString(i, url);
+            statement.setString(i + 1, url);
+            i += 2;
         }
 
+        ResultSet rs = statement.executeQuery();
+        while (rs.next()) {
+            seen.put(rs.getString(1), rs.getInt(2) > 0);
+        }
         return seen;
     }
 
@@ -124,32 +118,47 @@ class PostgresBackedPersistenceAdaptor implements PersistenceAdaptor {
     @Override
     @SneakyThrows
     public List<String> dequeueURLs(int count) {
-        long a = System.currentTimeMillis();
         PreparedStatement statement = toStatement(SQL.WorkQueue.dequeueDomainsStatement(count));
-        long b = System.currentTimeMillis();
+        long a = System.currentTimeMillis();
         ResultSet rs = statement.executeQuery();
-        long c = System.currentTimeMillis();
+        long b = System.currentTimeMillis();
+
+        logger.info("query took " + (b - a) + " ms");
 
         List<String> urls = new ArrayList<>();
         while (rs.next()) {
             urls.add(rs.getString(SQL.WorkQueue.URL_COLUMN));
         }
-        long d = System.currentTimeMillis();
-
-        System.out.println("" + (b - a) + ", " + (c - b) + ", " + (d - c));
         return urls;
     }
 
     @Override
     @SneakyThrows
-    public int getDomainScheduledCount(String domain) {
-        PreparedStatement statement = toStatement(SQL.DomainCount.getCount());
-        statement.setString(1, domain);
-        ResultSet rs = statement.executeQuery();
-        if (!rs.next()) {
-            return 0;
+    public Map<String, Integer> getDomainScheduledCount(Collection<String> domains) {
+        ResultSet rs = constructDomainScheduleCountQuery(domains).executeQuery();
+
+        Map<String, Integer> counts = new HashMap<>();
+        while (rs.next()) {
+            counts.put(rs.getString(SQL.DomainCount.DOMAIN_COLUMN), rs.getInt(SQL.DomainCount.COUNT_COLUMN));
         }
-        return rs.getInt(1);
+
+        for (String domain : domains) {
+            if (!counts.containsKey(domain)) {
+                counts.put(domain, 0);
+            }
+        }
+
+        return counts;
+    }
+
+    private PreparedStatement constructDomainScheduleCountQuery(Collection<String> domains) throws SQLException {
+        PreparedStatement statement = toStatement(SQL.DomainCount.getCount(domains.size()));
+        int idx = 1;
+        for (String domain : domains) {
+            statement.setString(idx, domain);
+            idx++;
+        }
+        return statement;
     }
 
     private PreparedStatement toStatement(String sql) throws SQLException {

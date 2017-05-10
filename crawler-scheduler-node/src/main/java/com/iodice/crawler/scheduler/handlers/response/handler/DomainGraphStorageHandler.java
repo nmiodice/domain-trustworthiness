@@ -25,7 +25,6 @@ class DomainGraphStorageHandler extends ValidatedResponseHandler {
     public WorkResponse validatedHandle(WorkResponse response) {
         String sourceDomain = URLFacade.toDomain(response.getSource());
         if (sourceDomain == null) {
-            logger.warn(String.format("url='%s' returned a null domain", response.getSource()));
             return response;
         }
 

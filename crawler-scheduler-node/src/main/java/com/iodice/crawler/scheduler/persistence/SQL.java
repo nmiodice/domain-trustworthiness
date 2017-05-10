@@ -12,14 +12,23 @@ final class SQL {
         }
 
         static String incrementCount() {
-            return String.format(
-                "INSERT INTO %s (%s, %s) VALUES (?, 1) ON CONFLICT (%s) DO UPDATE SET %s = %s.count + 1;", TABLE_NAME,
-                DOMAIN_COLUMN, COUNT_COLUMN, DOMAIN_COLUMN, COUNT_COLUMN, TABLE_NAME);
+            return String
+                .format("INSERT INTO %s (%s, %s) VALUES (?, 1) ON CONFLICT (%s) DO UPDATE SET %s = %s.count + 1;",
+                    TABLE_NAME, DOMAIN_COLUMN, COUNT_COLUMN, DOMAIN_COLUMN, COUNT_COLUMN, TABLE_NAME);
         }
 
-        static String getCount() {
-            return String.format("SELECT %s FROM %s WHERE %s = ?;", COUNT_COLUMN, TABLE_NAME, DOMAIN_COLUMN);
+        static String getCount(int numberToCount) {
+            StringBuilder stringClause = new StringBuilder();
+            for (int i = 0; i < numberToCount; i++) {
+                stringClause.append("?,");
+            }
+            String in = stringClause.toString();
+            in = in.substring(0, in.length() - 1);
+
+            return String.format("SELECT %s, %s FROM %s WHERE %s in (%s);", DOMAIN_COLUMN, COUNT_COLUMN, TABLE_NAME,
+                DOMAIN_COLUMN, in);
         }
+
     }
 
     static class WorkQueue {
@@ -29,9 +38,9 @@ final class SQL {
         static final String URL_COLUMN = "url";
 
         static String createStatement() {
-            return String.format(
-                "CREATE TABLE IF NOT EXISTS %s (id serial primary key, %s text NOT NULL, %s text NOT NULL);",
-                TABLE_NAME, DOMAIN_COLUMN, URL_COLUMN);
+            return String
+                .format("CREATE TABLE IF NOT EXISTS %s (id serial primary key, %s text NOT NULL, %s text NOT NULL);",
+                    TABLE_NAME, DOMAIN_COLUMN, URL_COLUMN);
         }
 
         static String createDomainIndex() {
@@ -44,11 +53,10 @@ final class SQL {
 
         static String dequeueDomainsStatement(int maxToDequeue) {
             String sql = "";
-            sql += "DELETE FROM %s WHERE %s IN (\n";
-            sql += "    SELECT * FROM (SELECT DISTINCT ON (%s) %s FROM %s ORDER BY %s, random()) as tmp\n";
-            sql += "order by random() limit %d) returning *;";
-
-            return String.format(sql, TABLE_NAME, PK, DOMAIN_COLUMN, PK, TABLE_NAME, DOMAIN_COLUMN, maxToDequeue);
+            sql += "DELETE FROM %s WHERE %s IN ( ";
+            sql += "	SELECT * FROM (SELECT DISTINCT ON (%s) %s FROM %s) as tmp order by random() limit %d";
+            sql += ") RETURNING *;";
+            return String.format(sql, TABLE_NAME, PK, DOMAIN_COLUMN, PK, TABLE_NAME, maxToDequeue);
         }
     }
 
@@ -57,17 +65,19 @@ final class SQL {
         static final String DESTINATION_COLUMN = "destination";
 
         static String create(String tableName) {
-            return String.format(
-                "CREATE TABLE IF NOT EXISTS %s (id serial primary key, %s text NOT NULL, %s text NOT NULL);",
-                tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
+            return String
+                .format("CREATE TABLE IF NOT EXISTS %s (id serial primary key, %s text NOT NULL, %s text NOT NULL);",
+                    tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
         }
 
         static String insert(String tableName) {
-            return String.format("INSERT INTO %s (%s, %s) VALUES (?, ?);", tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
+            return String
+                .format("INSERT INTO %s (%s, %s) VALUES (?, ?);", tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
         }
 
-        static String containsSource(String tablename) {
-            return String.format("SELECT COUNT(*) FROM %s where %s = ?;", tablename, SOURCE_COLUMN);
+        static String containsSourcePartial(String tableName) {
+            return String
+                .format("SELECT ? as %s, COUNT(*) FROM %s where %s = ?", SOURCE_COLUMN, tableName, SOURCE_COLUMN);
         }
     }
 
@@ -84,7 +94,11 @@ final class SQL {
     }
 
     static class UrlGraph extends GraphBase {
-        static final String TABLE_NAME = "edge_graph";
+        static final String TABLE_NAME = "url_graph";
+
+        static String createSourceIndex() {
+            return String.format("CREATE INDEX IF NOT EXISTS source_index ON %s (%s);", TABLE_NAME, SOURCE_COLUMN);
+        }
 
         static String create() {
             return create(TABLE_NAME);
@@ -94,8 +108,18 @@ final class SQL {
             return insert(TABLE_NAME);
         }
 
-        static String outgoingEdgeCount() {
-            return containsSource(TABLE_NAME);
+        static String outgoingEdgeCount(int count) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                if (i != 0) {
+                    sb.append(" UNION ");
+                }
+                sb.append(containsSourcePartial(TABLE_NAME));
+            }
+
+            sb.append(";");
+
+            return sb.toString();
         }
     }
 }

@@ -25,10 +25,6 @@ public class ResponseHandlerPipeline extends ValidatedResponseHandler {
     private List<PayloadHandler<WorkResponse>> handlers;
 
     public WorkResponse validatedHandle(WorkResponse response) {
-        logger.info(String.format("handling URL='%s' with %d destinations", response.getSource(),
-            response.getDestinations()
-                .size()));
-
         for (PayloadHandler<WorkResponse> handler : handlers) {
             if (response == null) {
                 logger.info("exiting handler handlers early because a handler returned a null response.");
@@ -41,6 +37,7 @@ public class ResponseHandlerPipeline extends ValidatedResponseHandler {
             }
             response = handler.handle(response);
         }
+        logger.info("done handling worker response");
         return response;
     }
 

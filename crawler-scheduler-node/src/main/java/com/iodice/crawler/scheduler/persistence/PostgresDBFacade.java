@@ -30,16 +30,15 @@ class PostgresDBFacade {
             dbConnection = DriverManager.getConnection(connectionString);
             logger.info("connected");
         } catch (Exception e) {
+            logger.error("unable to connect to postgres: " + e.getMessage(), e);
             throw new RuntimeException("unable to connect to postgres: " + connectionString, e);
         }
     }
 
     PreparedStatement preparedStatement(String sql) throws SQLException {
         if (!queryCache.containsKey(sql)) {
-            logger.info(String.format("caching prepared statement for query: %n%s", sql));
             queryCache.put(sql, dbConnection.prepareStatement(sql));
         }
-
         return queryCache.get(sql);
     }
 }

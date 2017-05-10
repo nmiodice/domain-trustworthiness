@@ -23,7 +23,6 @@ public class URLFacadeTest {
         assertNull(URLFacade.toDomain("cnn.com"));
         assertNull(URLFacade.toDomain("www.cnn.com/"));
         assertNull(URLFacade.toDomain("http://www..com/"));
-
     }
 
     @Test(expected = NullPointerException.class)

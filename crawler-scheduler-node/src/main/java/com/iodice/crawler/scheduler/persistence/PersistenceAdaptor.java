@@ -15,5 +15,5 @@ public interface PersistenceAdaptor {
 
     List<String> dequeueURLs(int count);
 
-    int getDomainScheduledCount(String domain);
+    Map<String, Integer> getDomainScheduledCount(Collection<String> domain);
 }

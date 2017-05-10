@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -127,15 +128,20 @@ class MongoBackedPersistenceAdaptor implements PersistenceAdaptor {
     }
 
     @Override
-    public int getDomainScheduledCount(String domain) {
+    public Map<String, Integer> getDomainScheduledCount(Collection<String> domains) {
+        return domains.stream()
+            .collect(Collectors.toMap(Function.identity(), this::getScheduledCount));
+    }
+
+    private int getScheduledCount(String domain) {
         List<Document> results = db.get(DOMAIN_SEEN_COUNT_COLLECTION, new Document(DOMAIN_SEEN_ID_KEY, domain));
         if (results.isEmpty()) {
             return 0;
         }
 
-        return results.get(0)
-            .getInteger(DOMAIN_SEEN_COUNT_KEY);
+        return results.get(0).getInteger(DOMAIN_SEEN_COUNT_KEY);
     }
+
 
     @Override
     public void enqueueURLs(Collection<String> urls) {

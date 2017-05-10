@@ -33,7 +33,16 @@ public abstract class LoopingWorker implements Runnable {
                         .nextLong(-1000, 1000));
                     Thread.sleep(randomWait);
                 }
+
+                long startMS = System.currentTimeMillis();
                 doOneWorkLoop();
+                long endMS = System.currentTimeMillis();
+
+                long deltaSec = endMS - startMS;
+
+                double loopPerSec = 1.0 / (double)deltaSec;
+                logger.info(String.format("worker %d looping at %f loops per second", threadID, loopPerSec));
+
             } catch (Exception e) {
                 logger.error(String.format("worker %d encountered an exception: %s", threadID, e.getMessage()), e);
             }

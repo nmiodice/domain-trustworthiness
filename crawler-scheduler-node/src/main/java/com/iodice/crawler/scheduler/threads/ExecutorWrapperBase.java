@@ -8,7 +8,9 @@ public abstract class ExecutorWrapperBase {
     private int threadCount;
 
     public ExecutorWrapperBase(int threadCount) {
-        executor = Executors.newFixedThreadPool(threadCount);
+        if (threadCount > 0) {
+            executor = Executors.newFixedThreadPool(threadCount);
+        }
         this.threadCount = threadCount;
     }
 

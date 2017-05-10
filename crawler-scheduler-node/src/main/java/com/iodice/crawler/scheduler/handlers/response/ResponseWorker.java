@@ -8,10 +8,13 @@ import com.iodice.crawler.scheduler.persistence.PersistenceAdaptor;
 import com.iodice.crawler.scheduler.persistence.PersistenceAdaptorFactory;
 import com.iodice.crawler.scheduler.queue.ResponseQueueAdaptor;
 import com.iodice.crawler.scheduler.threads.LoopingWorker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 class ResponseWorker extends LoopingWorker {
+    private static final Logger logger = LoggerFactory.getLogger(ResponseWorker.class);
 
     private ResponseQueueAdaptor responseQueue;
     private PayloadHandler<WorkResponse> responseHandler;
@@ -26,7 +29,13 @@ class ResponseWorker extends LoopingWorker {
     public void doOneWorkLoop() throws Exception {
         List<WorkResponse> responses = responseQueue.nextResponseBatch();
         for (WorkResponse response : responses) {
+            long startMS = System.currentTimeMillis();
             responseHandler.handle(response);
+
+            long endMS = System.currentTimeMillis();
+            long deltaSec = endMS - startMS;
+
+            logger.info(String.format("handling responses at %d ms per loop", deltaSec));
         }
     }
 

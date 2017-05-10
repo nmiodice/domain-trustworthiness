@@ -28,7 +28,6 @@ public class WorkQueueAdaptor {
     WorkQueueAdaptor() {
         incoming = new QueueReader(Config.getString("sqs.request.queue"));
         outgoing = new QueueWriter(Config.getString("sqs.response.queue"));
-        System.out.println("fuck: " + Config.getInt("sqs.response.cache_message_limit"));
         itemsToSend = new LinkedBlockingQueue<>(Config.getInt("sqs.response.cache_message_limit"));
 
         ExecutorService threadManager = Executors.newFixedThreadPool(1);
@@ -59,21 +58,34 @@ public class WorkQueueAdaptor {
         @Override
         public void run() {
             while (isRunning()) {
-                try {
-                    JSONObject item = itemsToSend.poll(10, TimeUnit.SECONDS);
-                    if (item == null) {
-                        if (currentLength > 0)
-                            sendAndReset();
-                    } else {
-                        addToBatchOrSend(item);
+                singleLoop();
+            }
+        }
+
+        private synchronized void singleLoop() {
+            try {
+                JSONObject item = itemsToSend.poll(10, TimeUnit.SECONDS);
+                if (item == null) {
+                    if (currentLength > 0) {
+                        sendAndReset();
                     }
-                } catch (Exception ignored) {
+                } else {
+                    addToBatchOrSend(item);
                 }
+            } catch (Exception e) {
+                logger.error("failed to handle queue item response: " + e.getMessage(), e);
             }
         }
 
         private void addToBatchOrSend(JSONObject item) {
             long itemLength = item.toString().length();
+
+            if (itemLength > MAX_ITEMS_LENGTH) {
+                logger.warn("skipping item with length = " + itemLength);
+                logger.debug(item.toString());
+                return;
+            }
+
             if (currentLength + itemLength < MAX_ITEMS_LENGTH) {
                 addToBatch(item, itemLength);
             } else {

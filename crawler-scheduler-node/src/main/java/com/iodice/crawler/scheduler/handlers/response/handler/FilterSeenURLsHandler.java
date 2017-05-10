@@ -28,15 +28,20 @@ class FilterSeenURLsHandler extends ValidatedResponseHandler {
             return null;
         }
 
-        Collection<String> unvisitedDestinations = filterVisitedDestinations(response);
-        if (unvisitedDestinations.isEmpty()) {
-            return null;
-        } else {
-            return WorkResponse.builder()
-                .source(response.getSource())
-                .destinations(unvisitedDestinations)
-                .build();
-        }
+        return response;
+// TODO: is the following block needed? am I limiting which nodes are destinations only because they were a source
+// TODO: before? seems wrong!
+
+//
+//        Collection<String> unvisitedDestinations = filterVisitedDestinations(response);
+//        if (unvisitedDestinations.isEmpty()) {
+//            return null;
+//        } else {
+//            return WorkResponse.builder()
+//                .source(response.getSource())
+//                .destinations(unvisitedDestinations)
+//                .build();
+//        }
     }
 
     private boolean seenSource(WorkResponse response) {
@@ -53,8 +58,6 @@ class FilterSeenURLsHandler extends ValidatedResponseHandler {
             .filter(url -> !isSeen.get(url))
             .collect(Collectors.toList());
 
-        int filteredCount = all.size() - unseen.size();
-        logger.info(String.format("filtered %d destinations from '%s'", filteredCount, response.getSource()));
         return unseen;
     }
 }
