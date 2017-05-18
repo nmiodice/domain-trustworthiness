@@ -58,7 +58,11 @@ public class WorkQueueAdaptor {
         @Override
         public void run() {
             while (isRunning()) {
-                singleLoop();
+                try {
+                    singleLoop();
+                } catch (Exception e) {
+                    logger.error("unexpected error! " + e.getMessage(), e);
+                }
             }
         }
 
@@ -104,9 +108,14 @@ public class WorkQueueAdaptor {
             JSONObject batchJSON = new JSONObject();
             batchJSON.put(BATCH_PAYLOAD_KEY, batched);
 
-            outgoing.send(batchJSON.toString());
-            batched.clear();
-            currentLength = 0;
+            try {
+                outgoing.send(batchJSON.toString());
+            } catch (Exception e) {
+                logger.error("error encountered during send. dropping message", e);
+            } finally {
+                batched.clear();
+                currentLength = 0;
+            }
         }
 
         boolean isRunning() {

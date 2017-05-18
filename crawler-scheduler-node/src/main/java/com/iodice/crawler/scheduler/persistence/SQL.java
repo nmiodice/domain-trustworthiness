@@ -97,7 +97,8 @@ final class SQL {
         static final String TABLE_NAME = "url_graph";
 
         static String createSourceIndex() {
-            return String.format("CREATE INDEX IF NOT EXISTS source_index ON %s (%s);", TABLE_NAME, SOURCE_COLUMN);
+            return String.format("CREATE INDEX IF NOT EXISTS source_index ON %s (%s);", TABLE_NAME,
+                SOURCE_COLUMN);
         }
 
         static String create() {
