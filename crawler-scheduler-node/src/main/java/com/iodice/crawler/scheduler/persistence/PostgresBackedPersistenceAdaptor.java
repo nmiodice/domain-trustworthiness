@@ -2,6 +2,7 @@ package com.iodice.crawler.scheduler.persistence;
 
 import com.iodice.crawler.scheduler.utils.URLFacade;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ class PostgresBackedPersistenceAdaptor implements PersistenceAdaptor {
 
             dbFacade.preparedStatement(SQL.UrlGraph.create()).executeUpdate();
             dbFacade.preparedStatement(SQL.UrlGraph.createSourceIndex()).executeUpdate();
+            dbFacade.preparedStatement(SQL.UrlGraph.createIdIndex()).executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("error initializing DB: " + e.getMessage(), e);
         }
@@ -61,7 +63,6 @@ class PostgresBackedPersistenceAdaptor implements PersistenceAdaptor {
             statement.setString(2, destination);
             statement.addBatch();
         }
-
         statement.executeBatch();
     }
 
@@ -108,7 +109,12 @@ class PostgresBackedPersistenceAdaptor implements PersistenceAdaptor {
 
     private void incrementDomainScheduledCountBatch(Map<String, String> urlToDomainMap) throws SQLException {
         PreparedStatement statement = toStatement(SQL.DomainCount.incrementCount());
-        for (String url : urlToDomainMap.keySet()) {
+
+        // sorting the urls here is necessary because it avoids deadlocks across different db processes.
+        List<String> urls = new ArrayList<>(urlToDomainMap.keySet());
+        urls.sort(String::compareTo);
+
+        for (String url : urls) {
             statement.setString(1, urlToDomainMap.get(url));
             statement.addBatch();
         }

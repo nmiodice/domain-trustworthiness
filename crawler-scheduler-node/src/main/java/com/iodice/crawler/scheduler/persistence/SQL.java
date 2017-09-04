@@ -52,22 +52,22 @@ final class SQL {
         }
 
         static String dequeueDomainsStatement(int maxToDequeue) {
-            String sql = "";
-            sql += "DELETE FROM %s WHERE %s IN ( ";
-            sql += "	SELECT * FROM (SELECT DISTINCT ON (%s) %s FROM %s) as tmp order by random() limit %d";
-            sql += ") RETURNING *;";
-            return String.format(sql, TABLE_NAME, PK, DOMAIN_COLUMN, PK, TABLE_NAME, maxToDequeue);
+            String sql = "DELETE FROM %s WHERE %s = ANY (array( " + "	SELECT %s FROM %s order by %s limit %d"
+                + ")) RETURNING *;";
+
+            return String.format(sql, TABLE_NAME, PK, PK, TABLE_NAME, PK, maxToDequeue);
         }
     }
 
     static class GraphBase {
+        static final String ID_COLUMN = "id";
         static final String SOURCE_COLUMN = "source";
         static final String DESTINATION_COLUMN = "destination";
 
         static String create(String tableName) {
             return String
-                .format("CREATE TABLE IF NOT EXISTS %s (id serial primary key, %s text NOT NULL, %s text NOT NULL);",
-                    tableName, SOURCE_COLUMN, DESTINATION_COLUMN);
+                .format("CREATE TABLE IF NOT EXISTS %s (%s serial primary key, %s text NOT NULL, %s text NOT NULL);",
+                    tableName, ID_COLUMN, SOURCE_COLUMN, DESTINATION_COLUMN);
         }
 
         static String insert(String tableName) {
@@ -99,6 +99,10 @@ final class SQL {
         static String createSourceIndex() {
             return String.format("CREATE INDEX IF NOT EXISTS source_index ON %s (%s);", TABLE_NAME,
                 SOURCE_COLUMN);
+        }
+
+        static String createIdIndex() {
+            return String.format("CREATE INDEX IF NOT EXISTS id_index ON %s (%s);", TABLE_NAME, ID_COLUMN);
         }
 
         static String create() {
